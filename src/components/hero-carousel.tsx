@@ -4,13 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  useCarousel,
-  type CarouselApi,
-} from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
 import { CONTACT } from '@/lib/site';
 import type { Locale } from '@/i18n/routing';
@@ -21,75 +14,48 @@ export interface HeroSlide {
 }
 
 const AUTOPLAY_MS = 6500;
+// Crossfade duration; keep slightly shorter than autoplay so a settled slide
+// is fully opaque well before the next change begins.
+const FADE_MS = 1100;
 
-function HeroControls({
-  slides,
-  labels,
+function SlideField({
+  slide,
+  index,
   current,
-  setCurrent,
+  count,
 }: {
-  slides: HeroSlide[];
-  labels: { previous: string; next: string };
+  slide: HeroSlide;
+  index: number;
   current: number;
-  setCurrent: (index: number) => void;
+  count: number;
 }) {
-  const { api, scrollPrev, scrollNext } = useCarousel();
-
-  useEffect(() => {
-    if (!api) return;
-    const onSelect = () => setCurrent(api.selectedScrollSnap());
-    onSelect();
-    api.on('select', onSelect);
-    return () => {
-      api.off('select', onSelect);
-    };
-  }, [api, setCurrent]);
-
+  const active = index === current;
   return (
-    <div className="pointer-events-auto flex flex-wrap items-center gap-x-4 gap-y-2">
-      <div className="text-porcelain/80 flex items-baseline gap-1 font-sans text-xs tracking-[0.18em]">
-        <span className="text-porcelain text-base font-semibold">
-          {String(current + 1).padStart(2, '0')}
-        </span>
-        <span aria-hidden>/</span>
-        <span>{String(slides.length).padStart(2, '0')}</span>
-      </div>
-
-      <div className="flex gap-1.5" role="tablist" aria-label={slides.map((s) => s.alt).join(', ')}>
-        {slides.map((slide, index) => (
-          <button
-            key={slide.src}
-            type="button"
-            role="tab"
-            aria-selected={current === index}
-            aria-label={slide.alt}
-            onClick={() => api?.scrollTo(index)}
-            className={cn(
-              'focus-editorial h-1.5 rounded-full transition-all duration-500',
-              current === index ? 'bg-rosso-soft w-8' : 'bg-porcelain/35 hover:bg-porcelain/60 w-3',
-            )}
-          />
-        ))}
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={scrollPrev}
-          aria-label={labels.previous}
-          className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
-        >
-          <ChevronLeft className="size-5" aria-hidden />
-        </button>
-        <button
-          type="button"
-          onClick={scrollNext}
-          aria-label={labels.next}
-          className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
-        >
-          <ChevronRight className="size-5" aria-hidden />
-        </button>
-      </div>
+    <div
+      aria-hidden={!active}
+      aria-roledescription="slide"
+      aria-label={`${index + 1} / ${count}`}
+      className={cn(
+        'absolute inset-0 overflow-hidden transition-opacity',
+        active ? 'opacity-100' : 'opacity-0',
+      )}
+      style={{ transitionDuration: `${FADE_MS}ms` }}
+    >
+      <Image
+        src={slide.src}
+        alt={slide.alt}
+        fill
+        priority={index === 0}
+        loading="eager"
+        sizes="100vw"
+        quality={82}
+        className={cn('object-cover', active && 'animate-ken-burns-loop')}
+      />
+      {/* Constant legibility gradient: part of this slide, fades with it. */}
+      <div
+        className="from-ink/70 via-ink/5 to-ink/10 pointer-events-none absolute inset-0 bg-gradient-to-t"
+        aria-hidden
+      />
     </div>
   );
 }
@@ -117,13 +83,16 @@ export function HeroCarousel({
   previousLabel: string;
   nextLabel: string;
 }) {
-  const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [dragging, setDragging] = useState(false);
   const interactionRef = useRef(false);
   const reducedRef = useRef(false);
 
-  const setCurrentCallback = useCallback((index: number) => setCurrent(index), []);
+  const step = useCallback(
+    (delta: number) => {
+      setCurrent((c) => (c + delta + slides.length) % slides.length);
+    },
+    [slides.length],
+  );
 
   // Autoplay: advances every AUTOPLAY_MS, paused on hover/focus and for reduced motion.
   useEffect(() => {
@@ -131,27 +100,11 @@ export function HeroCarousel({
       reducedRef.current = true;
     }
     if (reducedRef.current) return;
-    if (!api) return;
-    const advance = () => {
-      if (!interactionRef.current) api.scrollNext();
-    };
-    const timer = window.setInterval(advance, AUTOPLAY_MS);
+    const timer = window.setInterval(() => {
+      if (!interactionRef.current) step(1);
+    }, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [api]);
-
-  // Track pointer state from embla so the CSS slide transition can lift
-  // cleanly while the visitor drags (avoids rubber-band lag).
-  useEffect(() => {
-    if (!api) return;
-    const onPointerDown = () => setDragging(true);
-    const onPointerUp = () => setDragging(false);
-    api.on('pointerDown', onPointerDown);
-    api.on('pointerUp', onPointerUp);
-    return () => {
-      api.off('pointerDown', onPointerDown);
-      api.off('pointerUp', onPointerUp);
-    };
-  }, [api]);
+  }, [step]);
 
   return (
     <section className="ink-surface flex min-h-[100svh] flex-col" aria-labelledby="home-title">
@@ -174,46 +127,72 @@ export function HeroCarousel({
           interactionRef.current = false;
         }}
       >
-        <Carousel
-          setApi={setApi}
-          opts={{ loop: true, align: 'start' }}
-          className="hero-carousel absolute inset-0"
-          data-dragging={dragging ? 'true' : 'false'}
-        >
-          <CarouselContent className="-ml-0 h-full">
-            {slides.map((slide, index) => (
-              <CarouselItem key={slide.src} className="relative h-full pl-0">
-                <Image
-                  src={slide.src}
-                  alt={slide.alt}
-                  fill
-                  priority={index === 0}
-                  sizes="100vw"
-                  quality={82}
-                  className="animate-ken-burns-loop object-cover"
-                />
-                {/* Constant legibility gradient: part of the slide, glides with it,
-                    never fades or pops. Stronger at the bottom where the dock sits. */}
-                <div
-                  className="from-ink/70 via-ink/5 to-ink/10 pointer-events-none absolute inset-0 bg-gradient-to-t"
-                  aria-hidden
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+        {slides.map((slide, index) => (
+          <SlideField
+            key={slide.src}
+            slide={slide}
+            index={index}
+            current={current}
+            count={slides.length}
+          />
+        ))}
 
-          <div className="absolute inset-x-0 bottom-5 flex items-center justify-between px-5 sm:bottom-7 sm:px-8">
-            <HeroControls
-              slides={slides}
-              labels={{ previous: previousLabel, next: nextLabel }}
-              current={current}
-              setCurrent={setCurrentCallback}
-            />
-            <span className="sr-only" aria-live="polite" aria-atomic="true">
-              {`${current + 1} / ${slides.length}`}
-            </span>
+        <div className="absolute inset-x-0 bottom-5 flex items-center justify-between px-5 sm:bottom-7 sm:px-8">
+          <div className="pointer-events-auto flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="text-porcelain/80 flex items-baseline gap-1 font-sans text-xs tracking-[0.18em]">
+              <span className="text-porcelain text-base font-semibold">
+                {String(current + 1).padStart(2, '0')}
+              </span>
+              <span aria-hidden>/</span>
+              <span>{String(slides.length).padStart(2, '0')}</span>
+            </div>
+
+            <div
+              className="flex gap-1.5"
+              role="tablist"
+              aria-label={slides.map((s) => s.alt).join(', ')}
+            >
+              {slides.map((slide, index) => (
+                <button
+                  key={slide.src}
+                  type="button"
+                  role="tab"
+                  aria-selected={current === index}
+                  aria-label={slide.alt}
+                  onClick={() => setCurrent(index)}
+                  className={cn(
+                    'focus-editorial h-1.5 rounded-full transition-all duration-500',
+                    current === index
+                      ? 'bg-rosso-soft w-8'
+                      : 'bg-porcelain/35 hover:bg-porcelain/60 w-3',
+                  )}
+                />
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                aria-label={previousLabel}
+                className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
+              >
+                <ChevronLeft className="size-5" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                aria-label={nextLabel}
+                className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
+              >
+                <ChevronRight className="size-5" aria-hidden />
+              </button>
+            </div>
           </div>
-        </Carousel>
+          <span className="sr-only" aria-live="polite" aria-atomic="true">
+            {`${current + 1} / ${slides.length}`}
+          </span>
+        </div>
       </div>
 
       {/* Action dock — the only non-photo content on the hero, kept visible at all times. */}

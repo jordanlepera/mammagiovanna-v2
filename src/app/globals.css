@@ -190,24 +190,8 @@
 }
 
 /* Motion primitives — transforms/opacity only, preserving layout and crawlable HTML. */
-/* Full-screen hero carousel: embla's track wraps slides in auto-height
-   containers; force the chain to fill the measured flex area so the fill
-   images always get a real, non-zero box. */
-.hero-carousel [data-slot='carousel-content'] {
-  height: 100%;
-}
-.hero-carousel [data-slot='carousel-content'] > div {
-  height: 100%;
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-}
-/* While the visitor drags, embla drives the transform directly per frame —
-   a CSS transition would add rubber-band lag, so it is lifted for the drag. */
-.hero-carousel[data-dragging='true'] [data-slot='carousel-content'] > div {
-  transition: none;
-}
-
-/* The legibility gradient is a constant part of every slide and glides with
-   it — it never fades, so no overlay can pop or flicker at settle. */
+/* Hero slides are stacked layers; the active one carries the Ken Burns drift
+   and inactive slides simply fade out (opacity-only, compositor-safe). */
 
 @keyframes ken-burns-loop {
   from {
