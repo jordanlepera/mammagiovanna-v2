@@ -1,12 +1,11 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 // Latin subsets only — Colmar's languages (fr/en/de/it) need no Cyrillic.
 import '@fontsource-variable/outfit';
-import '@fontsource/caveat/latin-400.css';
-import '@fontsource/caveat/latin-700.css';
+import '@fontsource-variable/bodoni-moda';
 import { routing, localeNames, type Locale } from '@/i18n/routing';
 import { SITE_NAME, SITE_URL, CONTACT, SOCIALS, localeAlternates } from '@/lib/site';
 import { Navbar } from '@/components/navbar';
@@ -27,37 +26,24 @@ export async function generateMetadata({
   const alternates = localeAlternates('/');
   const siteName = SITE_NAME;
 
-  const meta: Record<Locale, { title: string; description: string }> = {
-    fr: {
-      title: 'Mamma Giovanna · Restaurant italien à Colmar',
-      description:
-        'Restaurant italien et pizzeria à Colmar. Pâtes fraîches, pizzas au feu de bois et desserts maison, au 12 rue des Marchands.',
-    },
-    en: {
-      title: 'Mamma Giovanna · Italian Restaurant in Colmar',
-      description:
-        'Italian restaurant and pizzeria in Colmar. Fresh pasta, wood-fired pizzas and homemade desserts at 12 rue des Marchands.',
-    },
-    de: {
-      title: 'Mamma Giovanna · Italienisches Restaurant in Colmar',
-      description:
-        'Italienisches Restaurant und Pizzeria in Colmar. Frische Pasta, Holzofen-Pizzen und hausgemachte Desserts, 12 rue des Marchands.',
-    },
-    it: {
-      title: 'Mamma Giovanna · Ristorante italiano a Colmar',
-      description:
-        'Ristorante italiano e pizzeria a Colmar. Pasta fresca, pizze al forno a legna e dolci fatti in casa, al 12 rue des Marchands.',
-    },
+  // Translated titles + descriptions live in messages (common namespace).
+  const titles: Record<Locale, string> = {
+    fr: 'Mamma Giovanna · Restaurant italien à Colmar',
+    en: 'Mamma Giovanna · Italian Restaurant in Colmar',
+    de: 'Mamma Giovanna · Italienisches Restaurant in Colmar',
+    it: 'Mamma Giovanna · Ristorante italiano a Colmar',
   };
-  const m = meta[locale as Locale] ?? meta.fr;
+  const t = await getTranslations({ locale, namespace: 'common' });
+  const title = titles[locale as Locale] ?? titles.fr;
+  const description = t('meta-home-description');
 
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: m.title,
+      default: title,
       template: `%s · ${siteName}`,
     },
-    description: m.description,
+    description: description,
     keywords: [
       'restaurant italien Colmar',
       'pizzeria Colmar',
@@ -72,15 +58,15 @@ export async function generateMetadata({
       type: 'website',
       siteName,
       url: alternates[locale as Locale] ?? alternates.fr,
-      title: m.title,
-      description: m.description,
+      title: title,
+      description: description,
       locale: locale === 'en' ? 'en_GB' : locale,
       images: [{ url: '/brand/salle.jpg', width: 1200, height: 800, alt: SITE_NAME }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: m.title,
-      description: m.description,
+      title: title,
+      description: description,
     },
     robots: { index: true, follow: true },
   };

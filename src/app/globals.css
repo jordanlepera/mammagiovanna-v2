@@ -7,7 +7,7 @@
 @theme inline {
   --font-heading: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: Caveat, Georgia, cursive;
+  --font-display: 'Bodoni Moda Variable', 'Didot', Georgia, serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,6 +40,8 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   /* Brand tokens */
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
   --color-basil: var(--basil);
   --color-basil-soft: var(--basil-soft);
   --color-tomato: var(--tomato);
@@ -54,46 +56,48 @@
 }
 
 /*
- * Brand: Mamma Giovanna — modern dark editorial.
- * Page theme is LOCKED to dark (single theme, no mid-page inversion).
- * Warm charcoal base, single basil-green accent family, tomato reserved
- * for the price/discount semantic only. Logo stays white (its native form).
+ * Brand: Mamma Giovanna — luxury Italian restaurant & pizzeria.
+ * Deep charcoal noir, champagne-gold accent, Bodoni Moda display serif.
+ * Page theme LOCKED dark (single theme). Gold = luxury accent; basil
+ * reserved for the open-status semantic; tomato for discounted prices.
  */
 :root,
 .dark {
-  --background: oklch(0.168 0.006 95); /* warm charcoal, not pure black */
-  --foreground: oklch(0.955 0.008 95); /* warm off-white */
-  --card: oklch(0.201 0.007 95);
+  --background: oklch(0.155 0.006 95);
+  --foreground: oklch(0.955 0.008 95);
+  --card: oklch(0.195 0.008 95);
   --card-foreground: oklch(0.955 0.008 95);
-  --popover: oklch(0.201 0.007 95);
+  --popover: oklch(0.195 0.008 95);
   --popover-foreground: oklch(0.955 0.008 95);
-  --primary: oklch(0.62 0.14 150); /* basil green */
-  --primary-foreground: oklch(0.985 0.005 95);
-  --secondary: oklch(0.243 0.008 95);
+  --primary: oklch(0.78 0.09 90); /* champagne gold */
+  --primary-foreground: oklch(0.155 0.006 95);
+  --secondary: oklch(0.24 0.009 95);
   --secondary-foreground: oklch(0.955 0.008 95);
-  --muted: oklch(0.243 0.008 95);
-  --muted-foreground: oklch(0.716 0.011 95);
-  --accent: oklch(0.28 0.02 150);
+  --muted: oklch(0.24 0.009 95);
+  --muted-foreground: oklch(0.71 0.012 95);
+  --accent: oklch(0.26 0.03 95);
   --accent-foreground: oklch(0.955 0.008 95);
   --destructive: oklch(0.63 0.19 25);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.14 150);
-  --chart-1: oklch(0.62 0.14 150);
-  --chart-2: oklch(0.716 0.011 95);
+  --ring: oklch(0.78 0.09 90);
+  --chart-1: oklch(0.78 0.09 90);
+  --chart-2: oklch(0.71 0.012 95);
   --chart-3: oklch(0.439 0.01 95);
   --chart-4: oklch(0.371 0.01 95);
   --chart-5: oklch(0.269 0.01 95);
   --radius: 0.5rem;
-  --sidebar: oklch(0.201 0.007 95);
+  --sidebar: oklch(0.195 0.008 95);
   --sidebar-foreground: oklch(0.955 0.008 95);
-  --sidebar-primary: oklch(0.62 0.14 150);
-  --sidebar-primary-foreground: oklch(0.985 0.005 95);
-  --sidebar-accent: oklch(0.28 0.02 150);
+  --sidebar-primary: oklch(0.78 0.09 90);
+  --sidebar-primary-foreground: oklch(0.155 0.006 95);
+  --sidebar-accent: oklch(0.26 0.03 95);
   --sidebar-accent-foreground: oklch(0.955 0.008 95);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.14 150);
+  --sidebar-ring: oklch(0.78 0.09 90);
   /* Brand tokens */
+  --gold: oklch(0.78 0.09 90);
+  --gold-soft: oklch(0.87 0.06 90);
   --basil: oklch(0.62 0.14 150);
   --basil-soft: oklch(0.85 0.06 150);
   --tomato: oklch(0.65 0.19 25);
@@ -109,17 +113,83 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: color-mix(in oklab, var(--basil) 40%, transparent);
+    background: color-mix(in oklab, var(--gold) 35%, transparent);
   }
 }
 
-/* Dotted price leader: classic menu typography, dark-editorial execution */
+/* Dotted price leader: classic menu typography */
 .price-leader {
   flex: 1 1 auto;
   border-bottom: 1px dotted color-mix(in oklab, var(--cream) 38%, transparent);
   transform: translateY(-0.35em);
   min-width: 1.5rem;
   margin-inline: 0.5rem;
+}
+
+/* ————— Luxury motion system (SEO-safe: decorative only) ————— */
+
+/* Slow cinematic zoom on hero photography (Ken Burns) */
+@keyframes ken-burns {
+  from {
+    transform: scale(1.08) translateX(1.5%);
+  }
+  to {
+    transform: scale(1) translateX(0);
+  }
+}
+.animate-ken-burns {
+  animation: ken-burns 14s ease-out forwards;
+}
+
+/* Marquee ingredient strip */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 36s linear infinite;
+}
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+/* Elegant content reveal on scroll (IntersectionObserver adds .revealed) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* SEO/CSS fallback: if JS is unavailable (crawlers), content stays visible */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Underline draw for nav links */
+.link-underline {
+  background-image: linear-gradient(var(--gold-soft), var(--gold-soft));
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -130,5 +200,9 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .animate-ken-burns,
+  .animate-marquee {
+    animation: none !important;
   }
 }

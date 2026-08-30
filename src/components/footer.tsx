@@ -67,7 +67,7 @@ export async function Footer() {
           </h3>
           <address className="text-cream/85 mt-3 space-y-2 text-sm not-italic">
             <p className="flex items-start gap-2">
-              <MapPin className="text-basil mt-0.5 h-4 w-4 shrink-0" />
+              <MapPin className="text-gold mt-0.5 h-4 w-4 shrink-0" />
               <span>
                 {CONTACT.street}
                 <br />
@@ -75,13 +75,13 @@ export async function Footer() {
               </span>
             </p>
             <p className="flex items-center gap-2">
-              <Phone className="text-basil h-4 w-4 shrink-0" />
+              <Phone className="text-gold h-4 w-4 shrink-0" />
               <a href={CONTACT.phoneHref} className="hover:text-cream">
                 {CONTACT.phone}
               </a>
             </p>
             <p className="flex items-center gap-2">
-              <UtensilsCrossed className="text-basil h-4 w-4 shrink-0" />
+              <UtensilsCrossed className="text-gold h-4 w-4 shrink-0" />
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Mamma+Giovanna+12+rue+des+Marchands+Colmar"
                 target="_blank"
