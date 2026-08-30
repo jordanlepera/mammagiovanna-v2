@@ -7,7 +7,14 @@ import type { Metadata } from 'next';
 import '@fontsource-variable/outfit';
 import '@fontsource-variable/bodoni-moda';
 import { routing, localeNames, type Locale } from '@/i18n/routing';
-import { SITE_NAME, SITE_URL, CONTACT, SOCIALS, localeAlternates } from '@/lib/site';
+import {
+  SITE_NAME,
+  SITE_URL,
+  CONTACT,
+  SOCIALS,
+  localeAlternates,
+  openingHoursSpecification,
+} from '@/lib/site';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import '../globals.css';
@@ -109,6 +116,7 @@ export default async function LocaleLayout({
     },
     sameAs: [SOCIALS.facebook, SOCIALS.instagram, SOCIALS.tripadvisor],
     acceptsReservations: 'True',
+    openingHoursSpecification: openingHoursSpecification(),
   };
 
   return (

@@ -29,7 +29,7 @@ function isOpenNow(): boolean {
     dimanche: 7,
   };
   const dow = dayMap[day.toLowerCase()] ?? 0;
-  if (dow === 0 || dow === 7) return false;
+  if (dow === 0 || dow === 1 || dow === 7) return false;
 
   return OPENING_HOURS.some(({ opens, closes }) => {
     const toMin = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));

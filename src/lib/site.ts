@@ -29,15 +29,15 @@ export const SOCIALS = {
     'https://www.tripadvisor.fr/Restaurant_Review-g187073-d10439955-Reviews-Mamma_Giovanna-Colmar_Haut_Rhin_Grand_Est.html',
 } as const;
 
-/** Midday + evening service, Monday to Saturday. Closed Sunday. */
+/** Midday + evening service, Tuesday to Saturday. Closed Monday and Sunday. */
 export const OPENING_HOURS = [
   {
-    days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    days: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     opens: '11:45',
     closes: '14:00',
   },
   {
-    days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    days: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     opens: '18:45',
     closes: '22:00',
   },
