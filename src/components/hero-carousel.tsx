@@ -119,6 +119,7 @@ export function HeroCarousel({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [dragging, setDragging] = useState(false);
   const interactionRef = useRef(false);
   const reducedRef = useRef(false);
 
@@ -136,6 +137,20 @@ export function HeroCarousel({
     };
     const timer = window.setInterval(advance, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
+  }, [api]);
+
+  // Track pointer state from embla so the CSS slide transition can lift
+  // cleanly while the visitor drags (avoids rubber-band lag).
+  useEffect(() => {
+    if (!api) return;
+    const onPointerDown = () => setDragging(true);
+    const onPointerUp = () => setDragging(false);
+    api.on('pointerDown', onPointerDown);
+    api.on('pointerUp', onPointerUp);
+    return () => {
+      api.off('pointerDown', onPointerDown);
+      api.off('pointerUp', onPointerUp);
+    };
   }, [api]);
 
   return (
@@ -163,10 +178,15 @@ export function HeroCarousel({
           setApi={setApi}
           opts={{ loop: true, align: 'start' }}
           className="hero-carousel absolute inset-0"
+          data-dragging={dragging ? 'true' : 'false'}
         >
           <CarouselContent className="-ml-0 h-full">
             {slides.map((slide, index) => (
-              <CarouselItem key={slide.src} className="relative h-full pl-0">
+              <CarouselItem
+                key={slide.src}
+                className="relative h-full pl-0"
+                data-active={current === index ? 'true' : 'false'}
+              >
                 <Image
                   src={slide.src}
                   alt={slide.alt}
@@ -176,9 +196,10 @@ export function HeroCarousel({
                   quality={82}
                   className="animate-ken-burns-loop object-cover"
                 />
-                {/* Legibility scrim, stronger at the bottom where the dock sits. */}
+                {/* Legibility scrim: fades in once the slide is the active one. */}
                 <div
-                  className="from-ink/85 via-ink/15 to-ink/30 pointer-events-none absolute inset-0 bg-gradient-to-t"
+                  data-slot="hero-scrim"
+                  className="from-ink/75 via-ink/10 to-ink/20 pointer-events-none absolute inset-0 bg-gradient-to-t"
                   aria-hidden
                 />
               </CarouselItem>

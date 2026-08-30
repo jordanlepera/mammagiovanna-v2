@@ -198,6 +198,22 @@
 }
 .hero-carousel [data-slot='carousel-content'] > div {
   height: 100%;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* While the visitor drags, embla drives the transform directly per frame —
+   a CSS transition would add rubber-band lag, so it is lifted for the drag. */
+.hero-carousel[data-dragging='true'] [data-slot='carousel-content'] > div {
+  transition: none;
+}
+
+/* The scrim fades in only after a slide settles as the active one; sliding
+   slides lose it again, so nothing ever pops in brutally. */
+.hero-carousel [data-slot='carousel-item'] [data-slot='hero-scrim'] {
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero-carousel [data-slot='carousel-item'][data-active='true'] [data-slot='hero-scrim'] {
+  opacity: 1;
 }
 
 @keyframes ken-burns-loop {
