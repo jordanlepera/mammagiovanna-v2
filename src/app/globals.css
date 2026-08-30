@@ -8,6 +8,15 @@
   --font-heading: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Bodoni Moda Variable', 'Didot', Georgia, serif;
+  --color-ink: var(--ink);
+  --color-ink-deep: var(--ink-deep);
+  --color-ink-soft: var(--ink-soft);
+  --color-porcelain: var(--porcelain);
+  --color-porcelain-soft: var(--porcelain-soft);
+  --color-rosso: var(--rosso);
+  --color-rosso-soft: var(--rosso-soft);
+  --color-olive: var(--olive);
+  --color-olive-soft: var(--olive-soft);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,13 +48,13 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  /* Brand tokens */
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
-  --color-basil: var(--basil);
-  --color-basil-soft: var(--basil-soft);
-  --color-tomato: var(--tomato);
-  --color-cream: var(--cream);
+  /* Backwards-compatible semantic aliases used by existing components. */
+  --color-gold: var(--rosso);
+  --color-gold-soft: var(--rosso-soft);
+  --color-basil: var(--olive);
+  --color-basil-soft: var(--olive-soft);
+  --color-tomato: var(--rosso);
+  --color-cream: var(--porcelain);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -56,135 +65,217 @@
 }
 
 /*
- * Brand: Mamma Giovanna — luxury Italian restaurant & pizzeria.
- * Deep charcoal noir, champagne-gold accent, Bodoni Moda display serif.
- * Page theme LOCKED dark (single theme). Gold = luxury accent; basil
- * reserved for the open-status semantic; tomato for discounted prices.
+ * Casa Editoriale — an Italian restaurant identity translated as a modern
+ * Milanese editorial system: ink, porcelain, rosso, and restrained olive.
+ * The semantic aliases above keep untouched content components stable while
+ * the redesign migrates their visible language away from generic dark/gold.
  */
 :root,
 .dark {
-  --background: oklch(0.155 0.006 95);
-  --foreground: oklch(0.955 0.008 95);
-  --card: oklch(0.195 0.008 95);
-  --card-foreground: oklch(0.955 0.008 95);
-  --popover: oklch(0.195 0.008 95);
-  --popover-foreground: oklch(0.955 0.008 95);
-  --primary: oklch(0.78 0.09 90); /* champagne gold */
-  --primary-foreground: oklch(0.155 0.006 95);
-  --secondary: oklch(0.24 0.009 95);
-  --secondary-foreground: oklch(0.955 0.008 95);
-  --muted: oklch(0.24 0.009 95);
-  --muted-foreground: oklch(0.71 0.012 95);
-  --accent: oklch(0.26 0.03 95);
-  --accent-foreground: oklch(0.955 0.008 95);
+  --ink: oklch(0.17 0.017 155);
+  --ink-deep: oklch(0.115 0.014 155);
+  --ink-soft: oklch(0.235 0.018 155);
+  --porcelain: oklch(0.95 0.018 88);
+  --porcelain-soft: oklch(0.88 0.025 88);
+  --rosso: oklch(0.62 0.19 28);
+  --rosso-soft: oklch(0.76 0.14 30);
+  --olive: oklch(0.58 0.1 126);
+  --olive-soft: oklch(0.78 0.08 126);
+
+  --background: var(--ink);
+  --foreground: var(--porcelain);
+  --card: var(--ink-soft);
+  --card-foreground: var(--porcelain);
+  --popover: var(--ink-soft);
+  --popover-foreground: var(--porcelain);
+  --primary: var(--rosso);
+  --primary-foreground: var(--porcelain);
+  --secondary: var(--ink-soft);
+  --secondary-foreground: var(--porcelain);
+  --muted: var(--ink-soft);
+  --muted-foreground: oklch(0.73 0.014 88);
+  --accent: oklch(0.3 0.04 28);
+  --accent-foreground: var(--porcelain);
   --destructive: oklch(0.63 0.19 25);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.78 0.09 90);
-  --chart-1: oklch(0.78 0.09 90);
-  --chart-2: oklch(0.71 0.012 95);
-  --chart-3: oklch(0.439 0.01 95);
-  --chart-4: oklch(0.371 0.01 95);
-  --chart-5: oklch(0.269 0.01 95);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.195 0.008 95);
-  --sidebar-foreground: oklch(0.955 0.008 95);
-  --sidebar-primary: oklch(0.78 0.09 90);
-  --sidebar-primary-foreground: oklch(0.155 0.006 95);
-  --sidebar-accent: oklch(0.26 0.03 95);
-  --sidebar-accent-foreground: oklch(0.955 0.008 95);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.78 0.09 90);
-  /* Brand tokens */
-  --gold: oklch(0.78 0.09 90);
-  --gold-soft: oklch(0.87 0.06 90);
-  --basil: oklch(0.62 0.14 150);
-  --basil-soft: oklch(0.85 0.06 150);
-  --tomato: oklch(0.65 0.19 25);
-  --cream: oklch(0.955 0.008 95);
+  --border: oklch(0.95 0.018 88 / 16%);
+  --input: oklch(0.95 0.018 88 / 18%);
+  --ring: var(--rosso-soft);
+  --chart-1: var(--rosso);
+  --chart-2: var(--olive);
+  --chart-3: var(--porcelain-soft);
+  --chart-4: oklch(0.43 0.04 155);
+  --chart-5: oklch(0.3 0.025 155);
+  --radius: 0.35rem;
+  --sidebar: var(--ink-soft);
+  --sidebar-foreground: var(--porcelain);
+  --sidebar-primary: var(--rosso);
+  --sidebar-primary-foreground: var(--porcelain);
+  --sidebar-accent: oklch(0.3 0.04 28);
+  --sidebar-accent-foreground: var(--porcelain);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--rosso-soft);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+    background: var(--ink);
+  }
   body {
     @apply bg-background text-foreground;
+    min-width: 320px;
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: color-mix(in oklab, var(--gold) 35%, transparent);
+    background: color-mix(in oklab, var(--rosso) 45%, transparent);
+    color: var(--porcelain);
+  }
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
-/* Dotted price leader: classic menu typography */
+/* Editorial surfaces */
+.ink-surface {
+  background: var(--ink);
+  color: var(--porcelain);
+}
+.ink-deep-surface {
+  background: var(--ink-deep);
+  color: var(--porcelain);
+}
+.porcelain-surface {
+  background: var(--porcelain);
+  color: var(--ink);
+}
+.porcelain-surface .text-muted-foreground {
+  color: color-mix(in oklab, var(--ink) 66%, transparent);
+}
+.porcelain-surface .border-border {
+  border-color: color-mix(in oklab, var(--ink) 18%, transparent);
+}
+
+/* Low-opacity tactile print grain — decorative, no layout or network cost. */
+.paper-grain {
+  position: relative;
+  isolation: isolate;
+}
+.paper-grain::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+.editorial-rule {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+}
+
+/* Dotted price leader: editorial menu rhythm. */
 .price-leader {
   flex: 1 1 auto;
-  border-bottom: 1px dotted color-mix(in oklab, var(--cream) 38%, transparent);
-  transform: translateY(-0.35em);
   min-width: 1.5rem;
-  margin-inline: 0.5rem;
+  margin-inline: 0.55rem;
+  border-bottom: 1px dotted color-mix(in oklab, currentColor 32%, transparent);
+  transform: translateY(-0.35em);
 }
 
-/* ————— Luxury motion system (SEO-safe: decorative only) ————— */
-
-/* Slow cinematic zoom on hero photography (Ken Burns) */
-@keyframes ken-burns {
+/* Motion primitives — transforms/opacity only, preserving layout and crawlable HTML. */
+@keyframes hero-drift {
   from {
-    transform: scale(1.08) translateX(1.5%);
+    transform: scale(1.06) translate3d(1%, 0, 0);
   }
   to {
-    transform: scale(1) translateX(0);
+    transform: scale(1) translate3d(0, 0, 0);
   }
 }
-.animate-ken-burns {
-  animation: ken-burns 14s ease-out forwards;
+.animate-hero-drift {
+  animation: hero-drift 16s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Marquee ingredient strip */
 @keyframes marquee {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 .animate-marquee {
-  animation: marquee 36s linear infinite;
+  animation: marquee 38s linear infinite;
+  will-change: transform;
 }
 .marquee-mask {
-  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 9%, black 91%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 9%, black 91%, transparent);
 }
 
-/* Elegant content reveal on scroll (IntersectionObserver adds .revealed) */
+/* Visible by default for crawlers and no-JS; the client island opts in. */
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+.reveal.reveal-ready {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translate3d(0, 22px, 0);
   transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.revealed {
+.reveal.reveal-ready.revealed {
   opacity: 1;
-  transform: translateY(0);
-}
-/* SEO/CSS fallback: if JS is unavailable (crawlers), content stays visible */
-@media (prefers-reduced-motion: reduce), (scripting: none) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  transform: translate3d(0, 0, 0);
 }
 
-/* Underline draw for nav links */
+@keyframes rule-grow {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+.animate-rule-grow {
+  animation: rule-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes gentle-pulse {
+  0%,
+  100% {
+    opacity: 0.68;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-gentle-pulse {
+  animation: gentle-pulse 2.6s ease-in-out infinite;
+}
+
+/* Keyboard focus is visible against both editorial surfaces. */
+.focus-editorial:focus-visible {
+  outline: 2px solid var(--rosso-soft);
+  outline-offset: 4px;
+}
+
+/* Existing legacy alias: maps the old class to the new Rosso underline. */
 .link-underline {
-  background-image: linear-gradient(var(--gold-soft), var(--gold-soft));
-  background-size: 0% 1px;
+  background-image: linear-gradient(var(--rosso-soft), var(--rosso-soft));
   background-repeat: no-repeat;
   background-position: 0 100%;
+  background-size: 0% 1px;
   transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .link-underline:hover,
@@ -198,16 +289,38 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
-  /* Ken Burns pause only — the marquee keeps moving: it is the affordance
-     that more claims exist beyond the visible edge (user-requested). */
-  .animate-ken-burns {
+  .reveal,
+  .reveal.reveal-ready {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-hero-drift,
+  .animate-rule-grow,
+  .animate-gentle-pulse {
     animation: none !important;
   }
+  /* Keep the ticker usable: it becomes a manual strip instead of disappearing. */
   .animate-marquee {
-    animation-duration: 90s !important;
-    animation-iteration-count: infinite !important;
+    animation: none !important;
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
+@media (scripting: none) {
+  .reveal,
+  .reveal.reveal-ready {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-marquee {
+    animation: none;
+    overflow-x: auto;
+    width: 100%;
   }
 }
