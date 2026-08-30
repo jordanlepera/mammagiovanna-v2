@@ -1,61 +1,63 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { createElement, useEffect, useId, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-/**
- * Scroll-reveal wrapper — decorative only.
- * Content is fully server-rendered (present in initial HTML for crawlers);
- * JS only adds the .revealed class. CSS keeps content visible when JS is
- * unavailable (scripting: none) and under prefers-reduced-motion.
- */
-export function Reveal({
-  children,
-  className,
-  delay = 0,
-  as: Tag = 'div',
-}: {
+type RevealTag = 'div' | 'section' | 'li' | 'p' | 'h2' | 'h3';
+
+interface RevealProps {
   children: ReactNode;
   className?: string;
   /** stagger delay in ms */
   delay?: number;
-  as?: 'div' | 'section' | 'li' | 'p' | 'h2' | 'h3';
-}) {
-  const ref = useRef<HTMLElement | null>(null);
+  as?: RevealTag;
+}
+
+/**
+ * Progressive-enhancement scroll reveal.
+ *
+ * The server-rendered element is visible by default. After hydration this
+ * island opts into the hidden initial state, then observes the element and
+ * reveals it as it enters the viewport. Crawlers/no-JS users therefore never
+ * receive content hidden behind a client-only class.
+ */
+export function Reveal({ children, className, delay = 0, as: Tag = 'div' }: RevealProps) {
+  const revealId = useId();
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      el.classList.add('revealed');
+    const element = document.getElementById(revealId);
+    if (!element) return;
+    element.classList.add('reveal-ready');
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      element.classList.add('revealed');
       return;
     }
-    const io = new IntersectionObserver(
+
+    const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
-            io.unobserve(entry.target);
+            observer.unobserve(entry.target);
           }
         }
       },
       { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
     );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [revealId]);
 
-  return (
-    <Tag
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- polymorphic tag
-      ref={ref as any}
-      className={cn('reveal', className)}
-      style={delay ? ({ '--reveal-delay': `${delay}ms` } as React.CSSProperties) : undefined}
-    >
-      {children}
-    </Tag>
+  const style = delay > 0 ? ({ '--reveal-delay': `${delay}ms` } as CSSProperties) : undefined;
+
+  return createElement(
+    Tag,
+    {
+      id: revealId,
+      className: cn('reveal', className),
+      style,
+    },
+    children,
   );
 }

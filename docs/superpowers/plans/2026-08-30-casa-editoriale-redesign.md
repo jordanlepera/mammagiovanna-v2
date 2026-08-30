@@ -26,10 +26,12 @@
 ### Task 1: Create the implementation branch and baseline evidence
 
 **Files:**
+
 - Modify: none
 - Evidence: git status, current commit, baseline quality commands
 
 **Interfaces:**
+
 - Consumes: approved design spec at `docs/superpowers/specs/2026-08-30-casa-editoriale-redesign-design.md`.
 - Produces: clean implementation branch and recorded baseline command results.
 
@@ -62,11 +64,13 @@ Do not create a no-op commit. The existing approved design-spec commit remains t
 ### Task 2: Implement Casa Editoriale design tokens and image loading
 
 **Files:**
+
 - Modify: `src/app/globals.css`
 - Modify: `src/app/[locale]/layout.tsx`
 - Modify: `public/site.webmanifest` only if its theme colors no longer match the approved palette
 
 **Interfaces:**
+
 - Consumes: existing Tailwind v4 theme variables, Bodoni Moda Variable, Outfit Variable, local `public/brand/salle.jpg`.
 - Produces: `--ink`, `--porcelain`, `--rosso`, and `--olive` token aliases; display/body font tokens; grain/rule utilities; CSS-only motion primitives; `next/image` LCP preload.
 
@@ -109,10 +113,12 @@ git commit -m "IMPL(T1): add Casa Editoriale design tokens"
 ### Task 3: Rebuild shared navigation and footer as editorial chrome
 
 **Files:**
+
 - Modify: `src/components/navbar.tsx`
 - Modify: `src/components/footer.tsx`
 
 **Interfaces:**
+
 - Consumes: `useLocale`, `usePathname`, next-intl common messages, `CONTACT`, `SOCIALS`, locale utilities.
 - Produces: responsive shared chrome with stable locale links, navigation labels, phone action, contact link, accessible mobile menu, and no route-specific content dependency.
 
@@ -155,6 +161,7 @@ git commit -m "IMPL(T2): rebuild responsive editorial chrome"
 ### Task 4: Build the Casa Editoriale home surface
 
 **Files:**
+
 - Modify: `src/app/[locale]/page.tsx`
 - Create: `src/components/home/value-ticker.tsx` only if the ticker needs a focused client island
 - Create: `src/components/home/category-index.tsx` for the server-rendered poster-style menu index
@@ -162,6 +169,7 @@ git commit -m "IMPL(T2): rebuild responsive editorial chrome"
 - Reuse: `src/components/reveal.tsx` or replace it with a smaller focused reveal island if its current API prevents the design
 
 **Interfaces:**
+
 - Consumes: existing common/menu messages, `MENU_SECTIONS`, `CONTACT`, `OPENING_HOURS`, `Reveal`, local assets.
 - Produces: server-rendered home with hero, value ticker, menu index, dish preview, Mamma Giovanna values block, visit block, and accessible actions.
 
@@ -205,11 +213,13 @@ git commit -m "IMPL(T3): build Casa Editoriale home surface"
 ### Task 5: Build the discoverable menu Category Index
 
 **Files:**
+
 - Modify: `src/app/[locale]/menu/page.tsx`
 - Modify or replace: `src/components/category-rail.tsx`
 - Create: `src/components/menu/category-index.tsx` if the wrapped index and desktop sticky index need a separate boundary
 
 **Interfaces:**
+
 - Consumes: `MENU_SECTIONS`, localized section labels, stable section ids.
 - Produces: accessible category index where all categories are discoverable at 390px and desktop/tablet users receive clear active-section feedback.
 
@@ -245,12 +255,14 @@ git commit -m "IMPL(T4): make every menu category discoverable"
 ### Task 6: Refine menu typography, rows, and wine tables
 
 **Files:**
+
 - Modify: `src/app/[locale]/menu/page.tsx`
 - Modify: `src/lib/menu-data.ts` only if a type/API correction is needed; do not change data values
 - Create: `src/components/menu/menu-row.tsx` if extracting the current row improves responsive control
 - Create: `src/components/menu/wine-table.tsx` if extracting the current table improves accessibility
 
 **Interfaces:**
+
 - Consumes: current typed `MenuItem`, `MenuSection`, wine arrays, localized menu messages.
 - Produces: readable editorial menu layout with intact descriptions, prices, capacities, discount semantics, and accessible responsive wine data.
 
@@ -286,12 +298,14 @@ git commit -m "IMPL(T5): refine responsive editorial menu layout"
 ### Task 7: SEO, accessibility, and motion audit
 
 **Files:**
+
 - Modify: `src/app/[locale]/layout.tsx` only for verified metadata/schema issues
 - Modify: `src/app/[locale]/menu/page.tsx` only for verified metadata/schema issues
 - Modify: `src/app/globals.css` only for verified reduced-motion/contrast issues
 - Modify: focused components only for audit findings
 
 **Interfaces:**
+
 - Consumes: all completed visual surfaces and existing metadata/JSON-LD helpers.
 - Produces: evidence that design motion does not compromise crawlability, accessibility, or performance.
 
@@ -327,10 +341,12 @@ Expected: all exit 0, zero lint warnings/errors, all locale routes statically ge
 ### Task 8: Final verification, commit, and handoff
 
 **Files:**
+
 - Modify: none unless a final verification gap is found
 - Evidence: build output, runtime smoke output, git diff/status, route/SEO report
 
 **Interfaces:**
+
 - Consumes: completed implementation branch.
 - Produces: verified commit history and a concise evidence-only report. No production deployment.
 
