@@ -44,7 +44,7 @@ function SlideField({
         priority={index === 0}
         loading="eager"
         sizes="100vw"
-        quality={82}
+        quality={75}
         className={cn('object-cover', active && 'animate-ken-burns-loop')}
       />
       {/* Constant legibility gradient: part of this slide, fades with it. */}
