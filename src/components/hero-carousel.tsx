@@ -12,6 +12,7 @@ export interface HeroSlide {
   src: string;
   alt: string;
   kind?: 'photo' | 'logo';
+  background?: string;
 }
 
 const AUTOPLAY_MS = 6500;
@@ -29,17 +30,18 @@ function SlideField({
 }) {
   const active = index === current;
   if (slide.kind === 'logo') {
-    // Brand slide: the mark centered at natural scale on the ink field —
-    // crisp at its native resolution, no cover-crop, no zoom.
+    // Brand slide: the mark centered at natural scale on a field matching
+    // the logo's own background, so the two blend seamlessly.
     return (
       <div
         aria-hidden={!active}
         aria-roledescription="slide"
         aria-label={`${index + 1} / ${count}`}
         className={cn(
-          'hero-fade bg-ink absolute inset-0 overflow-hidden',
+          'hero-fade absolute inset-0 overflow-hidden',
           active ? 'opacity-100' : 'opacity-0',
         )}
+        style={{ backgroundColor: slide.background }}
       >
         <div className="flex h-full w-full items-center justify-center px-10 py-16">
           <Image
@@ -131,6 +133,8 @@ export function HeroCarousel({
     return () => window.clearInterval(timer);
   }, [step]);
 
+  const lightControls = slides[current]?.kind === 'logo';
+
   return (
     <section className="ink-surface flex min-h-[100svh] flex-col" aria-labelledby="home-title">
       <h1 id="home-title" className="sr-only">
@@ -166,8 +170,18 @@ export function HeroCarousel({
 
         <div className="absolute inset-x-0 bottom-5 flex items-center justify-between px-5 sm:bottom-7 sm:px-8">
           <div className="pointer-events-auto flex flex-wrap items-center gap-x-4 gap-y-2">
-            <div className="text-porcelain/80 flex items-baseline gap-1 font-sans text-xs tracking-[0.18em]">
-              <span className="text-porcelain text-base font-semibold">
+            <div
+              className={cn(
+                'flex items-baseline gap-1 font-sans text-xs tracking-[0.18em]',
+                lightControls ? 'text-ink/70' : 'text-porcelain/80',
+              )}
+            >
+              <span
+                className={cn(
+                  'text-base font-semibold',
+                  lightControls ? 'text-ink' : 'text-porcelain',
+                )}
+              >
                 {String(current + 1).padStart(2, '0')}
               </span>
               <span aria-hidden>/</span>
@@ -191,7 +205,9 @@ export function HeroCarousel({
                     'focus-editorial h-1.5 rounded-full transition-all duration-500',
                     current === index
                       ? 'bg-rosso-soft w-8'
-                      : 'bg-porcelain/35 hover:bg-porcelain/60 w-3',
+                      : lightControls
+                        ? 'bg-ink/25 hover:bg-ink/55 w-3'
+                        : 'bg-porcelain/35 hover:bg-porcelain/60 w-3',
                   )}
                 />
               ))}
@@ -202,7 +218,12 @@ export function HeroCarousel({
                 type="button"
                 onClick={() => step(-1)}
                 aria-label={previousLabel}
-                className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
+                className={cn(
+                  'focus-editorial flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors',
+                  lightControls
+                    ? 'border-ink/30 text-ink hover:border-rosso hover:text-rosso'
+                    : 'border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft',
+                )}
               >
                 <ChevronLeft className="size-5" aria-hidden />
               </button>
@@ -210,7 +231,12 @@ export function HeroCarousel({
                 type="button"
                 onClick={() => step(1)}
                 aria-label={nextLabel}
-                className="focus-editorial border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors"
+                className={cn(
+                  'focus-editorial flex min-h-11 min-w-11 items-center justify-center rounded-full border transition-colors',
+                  lightControls
+                    ? 'border-ink/30 text-ink hover:border-rosso hover:text-rosso'
+                    : 'border-porcelain/30 text-porcelain hover:border-rosso-soft hover:text-rosso-soft',
+                )}
               >
                 <ChevronRight className="size-5" aria-hidden />
               </button>

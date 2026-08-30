@@ -89,7 +89,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }));
 
   const heroSlides = [
-    { src: '/brand/hero/hero-user-05.webp', alt: t('hero-slide-1'), kind: 'logo' as const },
+    {
+      src: '/brand/hero/hero-user-05.webp',
+      alt: t('hero-slide-1'),
+      kind: 'logo' as const,
+      background: '#fceee3',
+    },
     { src: '/brand/hero/hero-user-01.webp', alt: t('hero-slide-2') },
     { src: '/brand/hero/hero-user-02.webp', alt: t('hero-slide-3') },
     { src: '/brand/hero/hero-user-03.webp', alt: t('hero-slide-4') },
