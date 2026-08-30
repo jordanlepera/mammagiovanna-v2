@@ -50,8 +50,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
-      {/* HERO — editorial luxury: centered Bodoni wordmark over cinematic photo */}
-      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden">
+      {/* HERO — the photo already carries the brand text; buttons only */}
+      <section className="relative flex min-h-[100svh] items-end justify-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/brand/salle.jpg"
@@ -61,60 +61,33 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             sizes="100vw"
             className="animate-ken-burns object-cover"
           />
-          {/* Luxury vignette: deep at edges, breathable center */}
+          {/* Soft bottom scrim so the buttons stay legible over any photo */}
           <div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12,11,9,0.55)_55%,rgba(12,11,9,0.92)_100%)]"
+            className="from-background/85 via-background/25 absolute inset-0 bg-gradient-to-t to-transparent"
             aria-hidden
           />
-          <div className="bg-background/25 absolute inset-0" aria-hidden />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-3xl px-6 pt-24 text-center">
-          <p className="text-gold-soft/90 text-[0.65rem] font-medium tracking-[0.42em] uppercase sm:text-xs">
-            {t('home-kicker')}
-          </p>
+        {/* SEO: page-level h1 (visually hidden — the hero photo carries the wordmark) */}
+        <h1 className="sr-only">{t('restaurant')}</h1>
 
-          <h1 className="font-display text-cream mt-6 text-[clamp(3.2rem,10vw,7rem)] leading-[0.95] font-medium tracking-tight">
-            Mamma
-            <br />
-            Giovanna
-          </h1>
-
-          <div className="mx-auto mt-8 flex w-24 items-center justify-center gap-2" aria-hidden>
-            <span className="to-gold/80 h-px w-10 bg-gradient-to-r from-transparent" />
-            <span className="bg-gold h-1 w-1 rotate-45" />
-            <span className="to-gold/80 h-px w-10 bg-gradient-to-l from-transparent" />
-          </div>
-
-          <p className="text-cream/80 mx-auto mt-8 max-w-xl text-base leading-relaxed text-balance md:text-lg">
-            {t('home-hero-sub')}
-          </p>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href={`/${locale}/menu`}
-              className="group border-gold/70 bg-gold/10 text-gold-soft hover:bg-gold hover:text-background inline-flex h-12 items-center gap-2 border px-8 text-sm font-medium tracking-wide backdrop-blur-sm transition-all duration-300"
-            >
-              {t('home-cta-menu')}
-              <ArrowRight
-                className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                aria-hidden
-              />
-            </Link>
-            <span className="border-cream/20 text-cream/80 inline-flex items-center gap-2 border px-4 py-3 text-xs">
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${open ? 'bg-basil' : 'bg-muted-foreground'}`}
-              />
-              {open ? t('home-open-now') : t('home-closed-now')}
-            </span>
-          </div>
-        </div>
-
-        {/* scroll cue */}
-        <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2" aria-hidden>
-          <div className="border-cream/25 flex h-12 w-7 justify-center rounded-full border p-1.5">
-            <span className="bg-gold/90 h-2 w-1 animate-bounce rounded-full" />
-          </div>
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-4 px-6 pb-16 md:pb-24">
+          <Link
+            href={`/${locale}/menu`}
+            className="group border-gold/70 bg-gold/10 text-gold-soft hover:bg-gold hover:text-background inline-flex h-12 items-center gap-2 border px-8 text-sm font-medium tracking-wide backdrop-blur-sm transition-all duration-300"
+          >
+            {t('home-cta-menu')}
+            <ArrowRight
+              className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+          <span className="border-cream/20 text-cream/90 bg-background/40 inline-flex items-center gap-2 border px-4 py-3 text-xs backdrop-blur-sm">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${open ? 'bg-basil' : 'bg-muted-foreground'}`}
+            />
+            {open ? t('home-open-now') : t('home-closed-now')}
+          </span>
         </div>
       </section>
 

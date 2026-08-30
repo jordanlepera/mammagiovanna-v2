@@ -201,8 +201,13 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .animate-ken-burns,
-  .animate-marquee {
+  /* Ken Burns pause only — the marquee keeps moving: it is the affordance
+     that more claims exist beyond the visible edge (user-requested). */
+  .animate-ken-burns {
     animation: none !important;
+  }
+  .animate-marquee {
+    animation-duration: 90s !important;
+    animation-iteration-count: infinite !important;
   }
 }

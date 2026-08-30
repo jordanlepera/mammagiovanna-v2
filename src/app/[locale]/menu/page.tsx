@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale, getMessages } from 'next-intl/server';
 import { cn } from '@/lib/utils';
+import { CategoryRail } from '@/components/category-rail';
 import type { Metadata } from 'next';
 import {
   MENU_SECTIONS,
@@ -220,23 +221,15 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
           {t('reservation')} · {CONTACT.phone}
         </p>
       </header>
-      <nav
-        aria-label={t('menu')}
-        className="bg-background/90 sm:border-border/60 sticky top-16 z-30 -mx-4 mb-10 overflow-x-auto px-4 py-2 backdrop-blur-md sm:mx-0 sm:rounded-lg sm:border sm:px-2"
-      >
-        <ul className="flex gap-1 text-sm">
-          {MENU_SECTIONS.map((section) => (
-            <li key={section.id}>
-              <a
-                href={`#${section.id}`}
-                className="text-muted-foreground hover:text-cream block rounded-md px-3 py-1.5 whitespace-nowrap transition-colors hover:bg-white/5"
-              >
-                {menu[section.titleKey] ?? section.titleKey}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="mb-10">
+        <CategoryRail
+          label={t('menu')}
+          sections={MENU_SECTIONS.map((s) => ({
+            id: s.id,
+            label: menu[s.titleKey] ?? s.titleKey,
+          }))}
+        />
+      </div>
       <div className="space-y-14">{MENU_SECTIONS.map(renderSection)}</div>
     </div>
   );
