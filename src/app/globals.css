@@ -193,7 +193,7 @@
 /* Hero slides are stacked layers; the active one carries the Ken Burns drift
    and slides crossfade through an explicit opacity transition. */
 .hero-fade {
-  transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes ken-burns-loop {
@@ -320,7 +320,7 @@
   /* The slide crossfade is the hero's whole movement vocabulary: keep a calm
      fade even when the device requests less motion. */
   .hero-fade {
-    transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 }
 
