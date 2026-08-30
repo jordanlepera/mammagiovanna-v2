@@ -330,11 +330,10 @@
   .animate-gentle-pulse {
     animation: none !important;
   }
-  /* Keep the ticker usable: it becomes a manual strip instead of disappearing. */
+  /* The value band is decorative: keep a slow, calm drift instead of freezing
+     it — a gentle translate is low-stimulus and keeps the band alive. */
   .animate-marquee {
-    animation: none !important;
-    overflow-x: auto;
-    width: 100%;
+    animation: marquee 150s linear infinite !important;
   }
 }
 
