@@ -69,10 +69,13 @@
     "language": "Language",
     "previous-slide": "Previous image",
     "next-slide": "Next image",
-    "hero-alt-salle": "The dining room of Mamma Giovanna in Colmar",
-    "hero-alt-pizza": "Artisan pizza topped with salami, prosciutto and basil",
-    "hero-alt-interior": "The warm atmosphere of an Italian restaurant",
-    "hero-alt-ingredients": "Tomatoes, mozzarella and basil: the highest-quality ingredients"
+    "hero-slide-1": "Mamma Giovanna — Italian restaurant in Colmar",
+    "hero-slide-2": "Mamma Giovanna in Colmar — photo 2",
+    "hero-slide-3": "Mamma Giovanna in Colmar — photo 3",
+    "hero-slide-4": "Mamma Giovanna in Colmar — photo 4",
+    "hero-slide-5": "Mamma Giovanna in Colmar — photo 5",
+    "hero-slide-6": "Mamma Giovanna in Colmar — photo 6",
+    "hero-slide-7": "Mamma Giovanna in Colmar — photo 7"
   },
   "menu": {
     "antipasti": "Antipasti - Starters",

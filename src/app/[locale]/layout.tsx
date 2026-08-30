@@ -68,7 +68,7 @@ export async function generateMetadata({
       title: title,
       description: description,
       locale: locale === 'en' ? 'en_GB' : locale,
-      images: [{ url: '/brand/salle.jpg', width: 1200, height: 800, alt: SITE_NAME }],
+      images: [{ url: '/brand/hero/hero-user-04.webp', width: 1200, height: 675, alt: SITE_NAME }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -98,7 +98,7 @@ export default async function LocaleLayout({
     '@type': 'Restaurant',
     name: SITE_NAME,
     url: SITE_URL,
-    image: `${SITE_URL}/brand/salle.jpg`,
+    image: `${SITE_URL}/brand/hero/hero-user-04.webp`,
     telephone: CONTACT.phone,
     servesCuisine: ['Italian', 'Pizza'],
     priceRange: '€€',

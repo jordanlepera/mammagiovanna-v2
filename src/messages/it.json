@@ -69,10 +69,13 @@
     "language": "Lingua",
     "previous-slide": "Immagine precedente",
     "next-slide": "Immagine successiva",
-    "hero-alt-salle": "La sala del ristorante Mamma Giovanna a Colmar",
-    "hero-alt-pizza": "Pizza artigianale con salame, prosciutto e basilico",
-    "hero-alt-interior": "L'atmosfera accogliente di un ristorante italiano",
-    "hero-alt-ingredients": "Pomodori, mozzarella e basilico: ingredienti di prima qualità"
+    "hero-slide-1": "Mamma Giovanna — Ristorante italiano a Colmar",
+    "hero-slide-2": "Mamma Giovanna a Colmar — foto 2",
+    "hero-slide-3": "Mamma Giovanna a Colmar — foto 3",
+    "hero-slide-4": "Mamma Giovanna a Colmar — foto 4",
+    "hero-slide-5": "Mamma Giovanna a Colmar — foto 5",
+    "hero-slide-6": "Mamma Giovanna a Colmar — foto 6",
+    "hero-slide-7": "Mamma Giovanna a Colmar — foto 7"
   },
   "menu": {
     "antipasti": "Antipasti",

@@ -11,6 +11,7 @@ import type { Locale } from '@/i18n/routing';
 export interface HeroSlide {
   src: string;
   alt: string;
+  kind?: 'photo' | 'logo';
 }
 
 const AUTOPLAY_MS = 6500;
@@ -27,6 +28,34 @@ function SlideField({
   count: number;
 }) {
   const active = index === current;
+  if (slide.kind === 'logo') {
+    // Brand slide: the mark centered at natural scale on the ink field —
+    // crisp at its native resolution, no cover-crop, no zoom.
+    return (
+      <div
+        aria-hidden={!active}
+        aria-roledescription="slide"
+        aria-label={`${index + 1} / ${count}`}
+        className={cn(
+          'hero-fade bg-ink absolute inset-0 overflow-hidden',
+          active ? 'opacity-100' : 'opacity-0',
+        )}
+      >
+        <div className="flex h-full w-full items-center justify-center px-10 py-16">
+          <Image
+            src={slide.src}
+            alt={slide.alt}
+            width={507}
+            height={507}
+            priority={index === 0}
+            loading="eager"
+            quality={90}
+            className="h-auto w-full max-w-[58vw] sm:max-w-[32vw] lg:max-w-[24vw]"
+          />
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       aria-hidden={!active}

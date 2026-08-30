@@ -69,10 +69,13 @@
     "language": "Langue",
     "previous-slide": "Image précédente",
     "next-slide": "Image suivante",
-    "hero-alt-salle": "La salle du restaurant Mamma Giovanna à Colmar",
-    "hero-alt-pizza": "Pizza artisanale garnie de salami, prosciutto et basilic",
-    "hero-alt-interior": "Ambiance chaleureuse d'un restaurant italien",
-    "hero-alt-ingredients": "Tomates, mozzarella et basilic : des ingrédients de première qualité"
+    "hero-slide-1": "Mamma Giovanna — Restaurant italien à Colmar",
+    "hero-slide-2": "Mamma Giovanna à Colmar — photo 2",
+    "hero-slide-3": "Mamma Giovanna à Colmar — photo 3",
+    "hero-slide-4": "Mamma Giovanna à Colmar — photo 4",
+    "hero-slide-5": "Mamma Giovanna à Colmar — photo 5",
+    "hero-slide-6": "Mamma Giovanna à Colmar — photo 6",
+    "hero-slide-7": "Mamma Giovanna à Colmar — photo 7"
   },
   "menu": {
     "antipasti": "Antipasti - Entrées",

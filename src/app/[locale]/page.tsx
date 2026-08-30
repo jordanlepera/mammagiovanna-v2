@@ -89,10 +89,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }));
 
   const heroSlides = [
-    { src: '/brand/salle.jpg', alt: t('hero-alt-salle') },
-    { src: '/brand/hero/pizza.jpg', alt: t('hero-alt-pizza') },
-    { src: '/brand/hero/interior.jpg', alt: t('hero-alt-interior') },
-    { src: '/brand/hero/caprese.jpg', alt: t('hero-alt-ingredients') },
+    { src: '/brand/hero/hero-user-05.webp', alt: t('hero-slide-1'), kind: 'logo' as const },
+    { src: '/brand/hero/hero-user-01.webp', alt: t('hero-slide-2') },
+    { src: '/brand/hero/hero-user-02.webp', alt: t('hero-slide-3') },
+    { src: '/brand/hero/hero-user-03.webp', alt: t('hero-slide-4') },
+    { src: '/brand/hero/hero-user-04.webp', alt: t('hero-slide-5') },
+    { src: '/brand/hero/hero-user-06.webp', alt: t('hero-slide-6') },
+    { src: '/brand/hero/hero-user-07.webp', alt: t('hero-slide-7') },
   ];
 
   return (
