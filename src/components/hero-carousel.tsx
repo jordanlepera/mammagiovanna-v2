@@ -182,11 +182,7 @@ export function HeroCarousel({
         >
           <CarouselContent className="-ml-0 h-full">
             {slides.map((slide, index) => (
-              <CarouselItem
-                key={slide.src}
-                className="relative h-full pl-0"
-                data-active={current === index ? 'true' : 'false'}
-              >
+              <CarouselItem key={slide.src} className="relative h-full pl-0">
                 <Image
                   src={slide.src}
                   alt={slide.alt}
@@ -196,10 +192,10 @@ export function HeroCarousel({
                   quality={82}
                   className="animate-ken-burns-loop object-cover"
                 />
-                {/* Legibility scrim: fades in once the slide is the active one. */}
+                {/* Constant legibility gradient: part of the slide, glides with it,
+                    never fades or pops. Stronger at the bottom where the dock sits. */}
                 <div
-                  data-slot="hero-scrim"
-                  className="from-ink/75 via-ink/10 to-ink/20 pointer-events-none absolute inset-0 bg-gradient-to-t"
+                  className="from-ink/70 via-ink/5 to-ink/10 pointer-events-none absolute inset-0 bg-gradient-to-t"
                   aria-hidden
                 />
               </CarouselItem>

@@ -206,26 +206,21 @@
   transition: none;
 }
 
-/* The scrim fades in only after a slide settles as the active one; sliding
-   slides lose it again, so nothing ever pops in brutally. */
-.hero-carousel [data-slot='carousel-item'] [data-slot='hero-scrim'] {
-  opacity: 0;
-  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.hero-carousel [data-slot='carousel-item'][data-active='true'] [data-slot='hero-scrim'] {
-  opacity: 1;
-}
+/* The legibility gradient is a constant part of every slide and glides with
+   it — it never fades, so no overlay can pop or flicker at settle. */
 
 @keyframes ken-burns-loop {
   from {
     transform: scale(1) translate3d(0, 0, 0);
   }
   to {
-    transform: scale(1.09) translate3d(1.2%, 0, 0);
+    transform: scale(1.07) translate3d(1.2%, 0, 0);
   }
 }
 .animate-ken-burns-loop {
-  animation: ken-burns-loop 14s ease-in-out infinite alternate;
+  /* Linear + alternate: constant drift, no ease dwell at the turnaround,
+     so the image never freezes (and nothing appears to snap) mid-cycle. */
+  animation: ken-burns-loop 16s linear infinite alternate;
   will-change: transform;
 }
 
