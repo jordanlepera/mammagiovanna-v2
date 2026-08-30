@@ -14,9 +14,6 @@ export interface HeroSlide {
 }
 
 const AUTOPLAY_MS = 6500;
-// Crossfade duration; keep slightly shorter than autoplay so a settled slide
-// is fully opaque well before the next change begins.
-const FADE_MS = 1100;
 
 function SlideField({
   slide,
@@ -36,10 +33,9 @@ function SlideField({
       aria-roledescription="slide"
       aria-label={`${index + 1} / ${count}`}
       className={cn(
-        'absolute inset-0 overflow-hidden transition-opacity',
+        'hero-fade absolute inset-0 overflow-hidden',
         active ? 'opacity-100' : 'opacity-0',
       )}
-      style={{ transitionDuration: `${FADE_MS}ms` }}
     >
       <Image
         src={slide.src}
@@ -85,7 +81,7 @@ export function HeroCarousel({
 }) {
   const [current, setCurrent] = useState(0);
   const interactionRef = useRef(false);
-  const reducedRef = useRef(false);
+  const hoverCapableRef = useRef(false);
 
   const step = useCallback(
     (delta: number) => {
@@ -94,12 +90,12 @@ export function HeroCarousel({
     [slides.length],
   );
 
-  // Autoplay: advances every AUTOPLAY_MS, paused on hover/focus and for reduced motion.
+  // Autoplay: advances every AUTOPLAY_MS on every device, so the slide
+  // crossfade keeps breathing. Paused only while a real (hover-capable)
+  // pointer rests over the hero or keyboard focus is inside — plain touches
+  // never freeze the loop.
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      reducedRef.current = true;
-    }
-    if (reducedRef.current) return;
+    hoverCapableRef.current = window.matchMedia('(hover: hover)').matches;
     const timer = window.setInterval(() => {
       if (!interactionRef.current) step(1);
     }, AUTOPLAY_MS);
@@ -115,13 +111,15 @@ export function HeroCarousel({
       <div
         className="relative flex-1 overflow-hidden"
         onPointerEnter={() => {
-          interactionRef.current = true;
+          if (hoverCapableRef.current) interactionRef.current = true;
         }}
         onPointerLeave={() => {
           interactionRef.current = false;
         }}
-        onFocusCapture={() => {
-          interactionRef.current = true;
+        onFocusCapture={(event) => {
+          if (event.target instanceof Element && event.target.matches(':focus-visible')) {
+            interactionRef.current = true;
+          }
         }}
         onBlurCapture={() => {
           interactionRef.current = false;

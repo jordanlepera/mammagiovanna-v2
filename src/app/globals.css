@@ -191,7 +191,10 @@
 
 /* Motion primitives — transforms/opacity only, preserving layout and crawlable HTML. */
 /* Hero slides are stacked layers; the active one carries the Ken Burns drift
-   and inactive slides simply fade out (opacity-only, compositor-safe). */
+   and slides crossfade through an explicit opacity transition. */
+.hero-fade {
+  transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 @keyframes ken-burns-loop {
   from {
@@ -313,6 +316,11 @@
      it — a gentle translate is low-stimulus and keeps the band alive. */
   .animate-marquee {
     animation: marquee 150s linear infinite !important;
+  }
+  /* The slide crossfade is the hero's whole movement vocabulary: keep a calm
+     fade even when the device requests less motion. */
+  .hero-fade {
+    transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 }
 
