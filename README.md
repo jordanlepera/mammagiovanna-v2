@@ -4,14 +4,14 @@ Rebuild of the **Mamma Giovanna** restaurant website (www.mammagiovanna.com) on 
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Framework | [Next.js 16](https://nextjs.org) (App Router, Turbopack, React Compiler, `proxy.ts`) |
-| UI | React 19, [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4, Radix, Lucide) |
-| i18n | [next-intl](https://next-intl.dev) — **4 locales: FR · EN · DE · IT** (carried over verbatim from v1) |
-| Lint / Format | ESLint 9 (flat config) + Prettier 3 + prettier-plugin-tailwindcss + eslint-config-prettier |
-| Package manager | pnpm 11 |
-| Hosting | Vercel |
+| Layer           | Tech                                                                                                  |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| Framework       | [Next.js 16](https://nextjs.org) (App Router, Turbopack, React Compiler, `proxy.ts`)                  |
+| UI              | React 19, [shadcn/ui](https://ui.shadcn.com) (Tailwind CSS v4, Radix, Lucide)                         |
+| i18n            | [next-intl](https://next-intl.dev) — **4 locales: FR · EN · DE · IT** (carried over verbatim from v1) |
+| Lint / Format   | ESLint 9 (flat config) + Prettier 3 + prettier-plugin-tailwindcss + eslint-config-prettier            |
+| Package manager | pnpm 11                                                                                               |
+| Hosting         | Vercel                                                                                                |
 
 ## Translation inventory
 

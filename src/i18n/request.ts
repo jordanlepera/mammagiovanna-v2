@@ -8,7 +8,9 @@ import de from '../messages/de.json';
 import it from '../messages/it.json';
 
 const messages = { fr, en, de, it } as const;
-type Messages = (typeof messages)[Locale];
+
+/** Namespace-keyed messages for a single locale (common + menu). */
+export type Messages = (typeof messages)[Locale];
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
