@@ -1,9 +1,25 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { ArrowRight, Clock, MapPin, Phone } from 'lucide-react';
-import { CONTACT, OPENING_HOURS } from '@/lib/site';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+import { ArrowDownRight, ArrowRight, Clock, MapPin, Phone } from 'lucide-react';
+import { CategoryIndex } from '@/components/category-index';
 import { Reveal } from '@/components/reveal';
+import { ValueTicker } from '@/components/value-ticker';
+import { type Locale } from '@/i18n/routing';
+import { CONTACT, OPENING_HOURS } from '@/lib/site';
+import {
+  MENU_SECTIONS,
+  formatPrice,
+  itemDesc,
+  itemName,
+  type MenuItem,
+  type MenuSection,
+} from '@/lib/menu-data';
+
+/** Regenerate the time-sensitive status every five minutes while retaining SSR. */
+export const revalidate = 300;
+
+type MessageTree = Record<string, Record<string, string>>;
 
 function isOpenNow(): boolean {
   const now = new Date();
@@ -14,11 +30,10 @@ function isOpenNow(): boolean {
     minute: '2-digit',
     hour12: false,
   }).formatToParts(now);
-  const day = paris.find((p) => p.type === 'weekday')?.value ?? '';
-  const hour = Number(paris.find((p) => p.type === 'hour')?.value ?? '0');
-  const minute = Number(paris.find((p) => p.type === 'minute')?.value ?? '0');
-  const t = hour * 60 + minute;
-
+  const day = paris.find((part) => part.type === 'weekday')?.value ?? '';
+  const hour = Number(paris.find((part) => part.type === 'hour')?.value ?? '0');
+  const minute = Number(paris.find((part) => part.type === 'minute')?.value ?? '0');
+  const minutes = hour * 60 + minute;
   const dayMap: Record<string, number> = {
     lundi: 1,
     mardi: 2,
@@ -28,158 +43,178 @@ function isOpenNow(): boolean {
     samedi: 6,
     dimanche: 7,
   };
-  const dow = dayMap[day.toLowerCase()] ?? 0;
-  if (dow === 0 || dow === 1 || dow === 7) return false;
+  const dayNumber = dayMap[day.toLowerCase()] ?? 0;
+  if (dayNumber === 0 || dayNumber === 1 || dayNumber === 7) return false;
 
   return OPENING_HOURS.some(({ opens, closes }) => {
-    const toMin = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
-    return t >= toMin(opens) && t < toMin(closes);
+    const toMinutes = (value: string) => Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5));
+    return minutes >= toMinutes(opens) && minutes < toMinutes(closes);
   });
 }
 
-const SIGNATURE_KEYS = ['etoile-chef', 'gnocchi-gorgonzola', 'tiramisu', 'pizza-steak'] as const;
+const FEATURED_KEYS = ['etoile-chef', 'gnocchi-gorgonzola', 'tiramisu', 'pizza-steak'] as const;
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'common' });
-  const m = await getTranslations({ locale, namespace: 'menu' });
-  const open = isOpenNow();
+interface FeaturedItem {
+  key: string;
+  item: MenuItem;
+  section: MenuSection;
+}
 
-  const marqueeItems = t('home-marquee').split('·');
+function findFeaturedItems(): FeaturedItem[] {
+  const items = MENU_SECTIONS.flatMap((section) => [
+    ...section.items.map((item) => ({ item, section })),
+    ...section.subsections.flatMap((subsection) =>
+      subsection.items.map((item) => ({ item, section })),
+    ),
+  ]);
 
+  return FEATURED_KEYS.flatMap((key) => {
+    const found = items.find(({ item }) => item.key === key);
+    return found ? [{ key, item: found.item, section: found.section }] : [];
+  });
+}
+
+function Hero({
+  locale,
+  label,
+  menuLabel,
+  callLabel,
+  openLabel,
+  closedLabel,
+  open,
+}: {
+  locale: Locale;
+  label: string;
+  menuLabel: string;
+  callLabel: string;
+  openLabel: string;
+  closedLabel: string;
+  open: boolean;
+}) {
   return (
-    <>
-      {/* HERO — the photo already carries the brand text; buttons only */}
-      <section className="relative flex min-h-[100svh] items-end justify-center overflow-hidden">
-        <div className="absolute inset-0">
+    <section className="bg-ink px-4 pt-[5.5rem] pb-0 sm:px-8" aria-labelledby="home-title">
+      <div className="mx-auto max-w-7xl">
+        <div className="border-porcelain/20 bg-ink-deep relative aspect-[2048/885] overflow-hidden border sm:aspect-[2.4/1]">
           <Image
             src="/brand/salle.jpg"
-            alt=""
+            alt={label}
             fill
-            priority
-            sizes="100vw"
-            className="animate-ken-burns object-cover"
+            preload
+            sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) calc(100vw - 4rem), 1216px"
+            className="animate-hero-drift object-cover object-center"
           />
-          {/* Soft bottom scrim so the buttons stay legible over any photo */}
           <div
-            className="from-background/85 via-background/25 absolute inset-0 bg-gradient-to-t to-transparent"
+            className="from-ink/70 to-ink/5 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent"
             aria-hidden
           />
+          <h1 id="home-title" className="sr-only">
+            {label}
+          </h1>
         </div>
-
-        {/* SEO: page-level h1 (visually hidden — the hero photo carries the wordmark) */}
-        <h1 className="sr-only">{t('restaurant')}</h1>
-
-        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-4 px-6 pb-16 md:pb-24">
+        <div className="border-porcelain/20 grid border-x border-b sm:grid-cols-[1fr_auto_auto]">
           <Link
             href={`/${locale}/menu`}
-            className="group border-gold/70 bg-gold/10 text-gold-soft hover:bg-gold hover:text-background inline-flex h-12 items-center gap-2 border px-8 text-sm font-medium tracking-wide backdrop-blur-sm transition-all duration-300"
+            className="focus-editorial group bg-rosso text-porcelain hover:bg-rosso-soft hover:text-ink flex min-h-14 items-center justify-between px-5 text-sm font-semibold tracking-[0.12em] uppercase transition-colors sm:px-7"
           >
-            {t('home-cta-menu')}
+            <span>{menuLabel}</span>
             <ArrowRight
               className="size-4 transition-transform duration-300 group-hover:translate-x-1"
               aria-hidden
             />
           </Link>
-          <span className="border-cream/20 text-cream/90 bg-background/40 inline-flex items-center gap-2 border px-4 py-3 text-xs backdrop-blur-sm">
+          <a
+            href={CONTACT.phoneHref}
+            className="focus-editorial border-porcelain/20 text-porcelain hover:bg-porcelain hover:text-ink flex min-h-14 items-center justify-center gap-2 border-t px-5 text-xs font-medium tracking-[0.1em] uppercase transition-colors sm:border-t-0 sm:border-l sm:px-6"
+          >
+            <Phone className="size-4" aria-hidden />
+            <span>{callLabel}</span>
+          </a>
+          <div className="border-porcelain/20 text-porcelain/75 flex min-h-14 items-center justify-center gap-2 border-t px-5 text-xs sm:border-t-0 sm:border-l sm:px-6">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${open ? 'bg-basil' : 'bg-muted-foreground'}`}
+              className={`size-2 rounded-full ${open ? 'bg-olive-soft' : 'bg-porcelain/40'}`}
+              aria-hidden
             />
-            {open ? t('home-open-now') : t('home-closed-now')}
-          </span>
-        </div>
-      </section>
-
-      {/* MARQUEE — signature claims strip */}
-      <section aria-hidden className="border-gold/15 bg-background border-y py-5">
-        <div className="marquee-mask overflow-hidden">
-          <div className="animate-marquee flex w-max items-center gap-8 pr-8">
-            {[...marqueeItems, ...marqueeItems].map((item, i) => (
-              <span key={i} className="flex items-center gap-8 whitespace-nowrap">
-                <span className="font-display text-cream/70 text-lg italic">{item.trim()}</span>
-                <span className="bg-gold/70 h-1 w-1 rotate-45" />
-              </span>
-            ))}
+            <span>{open ? openLabel : closedLabel}</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* HOURS + ADDRESS */}
-      <section className="border-border/60 bg-secondary/30 border-b">
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 md:grid-cols-2">
-          <Reveal>
-            <div className="flex items-start gap-4">
-              <Clock className="text-gold mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-              <div>
-                <h2 className="text-gold-soft text-xs font-semibold tracking-[0.24em] uppercase">
-                  {t('opening-time')}
-                </h2>
-                <p className="text-cream/85 mt-3 text-sm">
-                  {t('opening-days')} · {t('lunch-hours')} · {t('dinner-hours')}
-                </p>
-                <p className="text-muted-foreground mt-1 text-sm">{t('closed')}</p>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <div className="flex items-start gap-4">
-              <MapPin className="text-gold mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-              <div>
-                <h2 className="text-gold-soft text-xs font-semibold tracking-[0.24em] uppercase">
-                  {t('home-find-us')}
-                </h2>
-                <p className="text-cream/85 mt-3 text-sm">
-                  {CONTACT.street}, {CONTACT.postalCode} {CONTACT.city}
-                </p>
-                <a
-                  className="text-gold-soft mt-1 inline-block text-sm underline-offset-4 hover:underline"
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                    `Mamma Giovanna ${CONTACT.street} ${CONTACT.city}`,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Google Maps
-                </a>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const activeLocale = locale as Locale;
+  const t = await getTranslations({ locale, namespace: 'common' });
+  const messages = (await getMessages({ locale })) as MessageTree;
+  const menu = messages.menu ?? {};
+  const open = isOpenNow();
+  const featured = findFeaturedItems();
+  const categories = MENU_SECTIONS.map((section) => ({
+    id: section.id,
+    label: menu[section.titleKey] ?? section.titleKey,
+  }));
 
-      {/* SIGNATURE DISHES — editorial serif list */}
-      <section className="mx-auto max-w-5xl px-6 py-24 md:py-32">
+  return (
+    <div className="ink-surface">
+      <Hero
+        locale={activeLocale}
+        label={t('restaurant')}
+        menuLabel={t('home-cta-menu')}
+        callLabel={t('home-cta-call')}
+        openLabel={t('home-open-now')}
+        closedLabel={t('home-closed-now')}
+        open={open}
+      />
+
+      <ValueTicker value={t('home-marquee')} label={t('restaurant')} />
+
+      {/* Lead statement: typography, not another redundant hero overlay. */}
+      <section className="mx-auto grid max-w-7xl gap-8 px-5 py-20 sm:px-8 md:grid-cols-[0.8fr_1.7fr] md:items-end md:gap-16 md:py-28">
         <Reveal>
-          <h2 className="font-display text-cream text-center text-3xl font-medium md:text-4xl">
-            {t('home-signature-title')}
-          </h2>
-          <div className="mx-auto mt-6 flex w-16 items-center justify-center gap-2" aria-hidden>
-            <span className="to-gold/80 h-px w-6 bg-gradient-to-r from-transparent" />
-            <span className="bg-gold h-1 w-1 rotate-45" />
-            <span className="to-gold/80 h-px w-6 bg-gradient-to-l from-transparent" />
-          </div>
+          <p className="text-rosso-soft text-[0.65rem] font-semibold tracking-[0.3em] uppercase">
+            {t('home-kicker')}
+          </p>
+          <div className="bg-rosso mt-5 h-px w-20" aria-hidden />
         </Reveal>
-        <ul className="divide-border/50 mt-14 divide-y">
-          {SIGNATURE_KEYS.map((key, i) => (
-            <Reveal as="li" key={key} delay={i * 100} className="group py-8">
-              <div className="flex items-baseline justify-between gap-4">
-                <h3 className="font-display text-cream/90 group-hover:text-cream text-xl italic transition-colors duration-300 md:text-2xl">
-                  {m(key)}
-                </h3>
-                <span className="price-leader" aria-hidden />
-                <span className="font-display text-gold-soft/70 text-lg">✦</span>
-              </div>
-            </Reveal>
-          ))}
-        </ul>
+        <Reveal delay={100}>
+          <p className="font-display text-porcelain max-w-4xl text-[clamp(2rem,5vw,4.5rem)] leading-[1.02] tracking-tight">
+            {t('home-hero-sub')}
+          </p>
+        </Reveal>
+      </section>
+
+      <CategoryIndex
+        locale={activeLocale}
+        categories={categories}
+        eyebrow={t('menu')}
+        title={t('menu-page-title')}
+      />
+
+      {/* Featured dishes: the menu is the hero of the product. */}
+      <section
+        className="ink-surface mx-auto max-w-7xl px-5 py-20 sm:px-8 md:py-28"
+        aria-labelledby="featured-title"
+      >
         <Reveal>
-          <div className="mt-10 text-center">
+          <div className="border-porcelain/20 flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-rosso-soft text-[0.65rem] font-semibold tracking-[0.3em] uppercase">
+                02
+              </p>
+              <h2
+                id="featured-title"
+                className="font-display text-porcelain mt-3 text-4xl leading-none sm:text-5xl"
+              >
+                {t('home-signature-title')}
+              </h2>
+            </div>
             <Link
               href={`/${locale}/menu`}
-              className="group text-gold-soft inline-flex items-center gap-2 text-sm font-medium"
+              className="focus-editorial group text-porcelain/65 hover:text-porcelain flex min-h-11 items-center gap-2 text-sm transition-colors"
             >
-              <span className="link-underline">{t('home-cta-menu')}</span>
+              {t('home-cta-menu')}
               <ArrowRight
                 className="size-4 transition-transform duration-300 group-hover:translate-x-1"
                 aria-hidden
@@ -187,47 +222,141 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </Link>
           </div>
         </Reveal>
+        <ol className="divide-porcelain/15 mt-4 divide-y">
+          {featured.map(({ key, item, section }, index) => (
+            <Reveal
+              as="li"
+              key={key}
+              delay={index * 80}
+              className="group grid gap-3 py-7 md:grid-cols-[5rem_0.7fr_1.2fr_auto] md:items-baseline md:gap-6"
+            >
+              <span className="text-rosso-soft font-sans text-[0.65rem] font-semibold tracking-[0.18em]">
+                0{index + 1}
+              </span>
+              <span className="text-porcelain/45 text-[0.65rem] font-semibold tracking-[0.2em] uppercase">
+                {menu[section.titleKey] ?? section.titleKey}
+              </span>
+              <div>
+                <h3 className="font-display text-porcelain group-hover:text-rosso-soft text-2xl italic transition-colors duration-300 sm:text-3xl">
+                  {itemName(item, menu)}
+                </h3>
+                {itemDesc(item, menu) && (
+                  <p className="text-porcelain/60 mt-2 max-w-xl text-sm leading-6">
+                    {itemDesc(item, menu)}
+                  </p>
+                )}
+              </div>
+              {item.price !== undefined && (
+                <span className="font-display text-porcelain/80 text-lg md:text-right">
+                  {formatPrice(item.price, activeLocale)}
+                </span>
+              )}
+            </Reveal>
+          ))}
+        </ol>
       </section>
 
-      {/* STORY — tribute to Nonna Giovanna */}
-      <section className="border-border/60 relative overflow-hidden border-y">
-        <Image
-          src="/brand/salle.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover object-bottom opacity-20"
+      {/* Values block: large quote on Rosso, supported by the real brand photo as texture. */}
+      <section
+        className="border-rosso-soft/35 bg-rosso text-porcelain relative overflow-hidden border-y"
+        aria-labelledby="story-title"
+      >
+        <div
+          className="border-porcelain/20 pointer-events-none absolute -top-24 -right-16 h-80 w-80 rounded-full border sm:-top-36 sm:-right-20 sm:h-[30rem] sm:w-[30rem]"
+          aria-hidden
         />
-        <div className="relative mx-auto max-w-3xl px-6 py-24 text-center md:py-32">
+        <div
+          className="border-porcelain/15 pointer-events-none absolute -bottom-40 -left-24 h-72 w-72 rounded-full border sm:h-96 sm:w-96"
+          aria-hidden
+        />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 md:grid-cols-[0.55fr_1.45fr] md:items-center md:gap-20 md:py-28">
           <Reveal>
-            <p className="text-gold-soft/90 text-[0.65rem] font-medium tracking-[0.42em] uppercase sm:text-xs">
-              {t('home-story-title')}
-            </p>
-            <p className="font-display text-cream/90 mx-auto mt-8 max-w-2xl text-xl leading-relaxed text-balance italic md:text-2xl">
-              {t('home-story-body')}
-            </p>
+            <div className="flex items-center gap-4 md:block">
+              <span className="text-porcelain/70 font-sans text-[0.65rem] font-semibold tracking-[0.3em] uppercase">
+                03
+              </span>
+              <div className="bg-porcelain/70 hidden h-px w-20 md:mt-6 md:block" aria-hidden />
+              <h2
+                id="story-title"
+                className="font-display text-porcelain text-3xl italic md:mt-6 md:text-4xl"
+              >
+                {t('home-story-title')}
+              </h2>
+            </div>
+          </Reveal>
+          <Reveal delay={100}>
+            <blockquote className="font-display text-porcelain max-w-4xl text-[clamp(1.65rem,3.7vw,3.4rem)] leading-[1.12]">
+              “{t('home-story-body')}”
+            </blockquote>
           </Reveal>
         </div>
       </section>
 
-      {/* RESERVATION CTA */}
-      <section className="mx-auto max-w-6xl px-6 py-24 text-center md:py-32">
-        <Reveal>
-          <h2 className="font-display text-cream text-3xl font-medium md:text-4xl">
-            {t('home-cta-call')}
-          </h2>
-          <a
-            href={CONTACT.phoneHref}
-            className="group border-gold/70 bg-gold/10 font-display text-gold-soft hover:bg-gold hover:text-background mt-8 inline-flex h-14 items-center gap-3 border px-10 text-xl tracking-wide transition-all duration-300"
-          >
-            <Phone className="size-5" aria-hidden />
-            {CONTACT.phone}
-          </a>
-          <p className="text-muted-foreground mt-6 text-sm">
-            {CONTACT.street}, {CONTACT.city}
-          </p>
-        </Reveal>
+      {/* Visit block: high-intent information, still server rendered. */}
+      <section
+        id="visit"
+        className="ink-deep-surface border-porcelain/15 border-b"
+        aria-labelledby="visit-title"
+      >
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 md:grid-cols-[1fr_1fr] md:gap-20 md:py-28">
+          <Reveal>
+            <p className="text-rosso-soft text-[0.65rem] font-semibold tracking-[0.3em] uppercase">
+              04
+            </p>
+            <h2 id="visit-title" className="font-display text-porcelain mt-4 text-4xl sm:text-5xl">
+              {t('home-find-us')}
+            </h2>
+            <div className="mt-8 flex items-start gap-4">
+              <MapPin className="text-rosso-soft mt-1 size-5 shrink-0" aria-hidden />
+              <address className="text-porcelain/75 text-sm leading-7 not-italic">
+                {CONTACT.street}
+                <br />
+                {CONTACT.postalCode} {CONTACT.city}
+              </address>
+            </div>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Mamma Giovanna ${CONTACT.street} ${CONTACT.city}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-editorial text-rosso-soft mt-5 inline-flex min-h-11 items-center gap-2 text-sm underline-offset-4 hover:underline"
+            >
+              Google Maps <ArrowUpRightIcon />
+            </a>
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="border-porcelain/20 border-t pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-12">
+              <div className="flex items-start gap-4">
+                <Clock className="text-rosso-soft mt-1 size-5 shrink-0" aria-hidden />
+                <div>
+                  <h3 className="font-display text-porcelain text-2xl">{t('opening-time')}</h3>
+                  <ul className="text-porcelain/70 mt-4 space-y-2 text-sm leading-6">
+                    <li>{t('opening-days')}</li>
+                    <li>{t('lunch-hours')}</li>
+                    <li>{t('dinner-hours')}</li>
+                    <li className="text-porcelain">{t('closed')}</li>
+                  </ul>
+                </div>
+              </div>
+              <a
+                href={CONTACT.phoneHref}
+                className="focus-editorial border-rosso-soft/70 bg-rosso text-porcelain hover:bg-rosso-soft hover:text-ink mt-8 inline-flex min-h-12 items-center gap-3 border px-5 text-sm font-semibold transition-colors"
+              >
+                <Phone className="size-4" aria-hidden />
+                {CONTACT.phone}
+              </a>
+            </div>
+          </Reveal>
+        </div>
       </section>
-    </>
+
+      <div className="porcelain-surface text-ink/55 flex items-center justify-center gap-3 px-5 py-5 text-center text-xs font-medium tracking-[0.2em] uppercase">
+        <ArrowDownRight className="text-rosso size-4" aria-hidden />
+        <span>{t('home-cta-menu')}</span>
+      </div>
+    </div>
   );
+}
+
+function ArrowUpRightIcon() {
+  return <ArrowRight className="size-4" aria-hidden />;
 }
