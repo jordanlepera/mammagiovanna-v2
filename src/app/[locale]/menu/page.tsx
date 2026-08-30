@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale, getMessages } from 'next-intl/server';
 import { cn } from '@/lib/utils';
-import { CategoryRail } from '@/components/category-rail';
+import { MenuCategoryIndex } from '@/components/menu-category-index';
 import type { Metadata } from 'next';
 import {
   MENU_SECTIONS,
@@ -213,20 +213,32 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(menuJsonLd).replace(/</g, '\u003c') }}
       />
-      <header className="mb-10">
-        <h1 className="font-display text-cream text-4xl font-bold md:text-5xl">
+      <header className="border-porcelain/20 mb-10 border-b pb-8">
+        <p className="text-rosso-soft text-[0.65rem] font-semibold tracking-[0.3em] uppercase">
+          01
+        </p>
+        <h1 className="font-display text-porcelain mt-4 text-5xl font-medium md:text-7xl">
           {t('menu-page-title')}
         </h1>
-        <p className="text-muted-foreground mt-2 max-w-xl text-sm">
-          {t('reservation')} · {CONTACT.phone}
-        </p>
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <p className="text-porcelain/65 max-w-xl text-sm leading-6">
+            {t('reservation')} · {CONTACT.phone}
+          </p>
+          <a
+            href={CONTACT.phoneHref}
+            className="focus-editorial border-rosso-soft/70 bg-rosso text-porcelain hover:bg-rosso-soft hover:text-ink inline-flex min-h-11 items-center justify-center px-4 text-xs font-semibold tracking-[0.12em] uppercase transition-colors"
+          >
+            {t('home-cta-call')}
+          </a>
+        </div>
       </header>
-      <div className="mb-10">
-        <CategoryRail
+      <div className="mb-12">
+        <MenuCategoryIndex
+          locale={locale as Locale}
           label={t('menu')}
-          sections={MENU_SECTIONS.map((s) => ({
-            id: s.id,
-            label: menu[s.titleKey] ?? s.titleKey,
+          categories={MENU_SECTIONS.map((section) => ({
+            id: section.id,
+            label: menu[section.titleKey] ?? section.titleKey,
           }))}
         />
       </div>
