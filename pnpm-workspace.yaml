@@ -1,0 +1,5 @@
+# pnpm workspace & project settings (pnpm 11 syntax)
+# Native build scripts that are safe to run (approved explicitly).
+allowBuilds:
+  '@swc/core': true
+  '@parcel/watcher': true
