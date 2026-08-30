@@ -37,7 +37,7 @@ export function CategoryIndex({
             </h2>
           </div>
           <span className="font-display text-ink/20 text-4xl italic" aria-hidden>
-            01—09
+            01—{String(categories.length).padStart(2, '0')}
           </span>
         </div>
 
