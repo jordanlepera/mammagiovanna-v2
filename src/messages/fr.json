@@ -66,7 +66,13 @@
     "meta-menu-description": "La carte de Mamma Giovanna : salades, pâtes, pizzas, spécialités italiennes, viandes, poissons, desserts maison et vins italiens.",
     "home-marquee": "Pâte à pizza faite maison · Ingrédients de première qualité préparés par nos soins · Cuisine italienne généreuse · Desserts faits maison · Colmar",
     "home-kicker": "Restaurant italien & pizzeria — Colmar",
-    "language": "Langue"
+    "language": "Langue",
+    "previous-slide": "Image précédente",
+    "next-slide": "Image suivante",
+    "hero-alt-salle": "La salle du restaurant Mamma Giovanna à Colmar",
+    "hero-alt-pizza": "Pizza artisanale garnie de salami, prosciutto et basilic",
+    "hero-alt-interior": "Ambiance chaleureuse d'un restaurant italien",
+    "hero-alt-ingredients": "Tomates, mozzarella et basilic : des ingrédients de première qualité"
   },
   "menu": {
     "antipasti": "Antipasti - Entrées",

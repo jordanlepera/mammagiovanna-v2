@@ -273,7 +273,6 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
       </header>
       <div className="mb-12">
         <MenuCategoryIndex
-          locale={locale as Locale}
           label={t('menu')}
           categories={MENU_SECTIONS.map((section) => ({
             id: section.id,

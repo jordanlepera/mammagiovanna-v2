@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { ArrowDownRight, ArrowRight, Clock, MapPin, Phone } from 'lucide-react';
 import { CategoryIndex } from '@/components/category-index';
+import { HeroCarousel } from '@/components/hero-carousel';
 import { Reveal } from '@/components/reveal';
 import { ValueTicker } from '@/components/value-ticker';
 import { type Locale } from '@/i18n/routing';
@@ -74,74 +74,6 @@ function findFeaturedItems(): FeaturedItem[] {
   });
 }
 
-function Hero({
-  locale,
-  label,
-  menuLabel,
-  callLabel,
-  openLabel,
-  closedLabel,
-  open,
-}: {
-  locale: Locale;
-  label: string;
-  menuLabel: string;
-  callLabel: string;
-  openLabel: string;
-  closedLabel: string;
-  open: boolean;
-}) {
-  return (
-    <section className="bg-ink px-4 pt-[5.5rem] pb-0 sm:px-8" aria-labelledby="home-title">
-      <div className="mx-auto max-w-7xl">
-        <div className="border-porcelain/20 bg-ink-deep relative aspect-[2048/885] overflow-hidden border sm:aspect-[2.4/1]">
-          <Image
-            src="/brand/salle.jpg"
-            alt={label}
-            fill
-            preload
-            sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) calc(100vw - 4rem), 1216px"
-            className="animate-hero-drift object-cover object-center"
-          />
-          <div
-            className="from-ink/70 to-ink/5 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent"
-            aria-hidden
-          />
-          <h1 id="home-title" className="sr-only">
-            {label}
-          </h1>
-        </div>
-        <div className="border-porcelain/20 grid border-x border-b sm:grid-cols-[1fr_auto_auto]">
-          <Link
-            href={`/${locale}/menu`}
-            className="focus-editorial group bg-rosso text-porcelain hover:bg-rosso-soft hover:text-ink flex min-h-14 items-center justify-between px-5 text-sm font-semibold tracking-[0.12em] uppercase transition-colors sm:px-7"
-          >
-            <span>{menuLabel}</span>
-            <ArrowRight
-              className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-              aria-hidden
-            />
-          </Link>
-          <a
-            href={CONTACT.phoneHref}
-            className="focus-editorial border-porcelain/20 text-porcelain hover:bg-porcelain hover:text-ink flex min-h-14 items-center justify-center gap-2 border-t px-5 text-xs font-medium tracking-[0.1em] uppercase transition-colors sm:border-t-0 sm:border-l sm:px-6"
-          >
-            <Phone className="size-4" aria-hidden />
-            <span>{callLabel}</span>
-          </a>
-          <div className="border-porcelain/20 text-porcelain/75 flex min-h-14 items-center justify-center gap-2 border-t px-5 text-xs sm:border-t-0 sm:border-l sm:px-6">
-            <span
-              className={`size-2 rounded-full ${open ? 'bg-olive-soft' : 'bg-porcelain/40'}`}
-              aria-hidden
-            />
-            <span>{open ? openLabel : closedLabel}</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -156,15 +88,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     label: menu[section.titleKey] ?? section.titleKey,
   }));
 
+  const heroSlides = [
+    { src: '/brand/salle.jpg', alt: t('hero-alt-salle') },
+    { src: '/brand/hero/pizza.jpg', alt: t('hero-alt-pizza') },
+    { src: '/brand/hero/interior.jpg', alt: t('hero-alt-interior') },
+    { src: '/brand/hero/caprese.jpg', alt: t('hero-alt-ingredients') },
+  ];
+
   return (
     <div className="ink-surface">
-      <Hero
+      <HeroCarousel
         locale={activeLocale}
+        slides={heroSlides}
         label={t('restaurant')}
         menuLabel={t('home-cta-menu')}
         callLabel={t('home-cta-call')}
         openLabel={t('home-open-now')}
         closedLabel={t('home-closed-now')}
+        previousLabel={t('previous-slide')}
+        nextLabel={t('next-slide')}
         open={open}
       />
 

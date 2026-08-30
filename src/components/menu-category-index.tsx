@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
-import type { Locale } from '@/i18n/routing';
 
 interface MenuCategory {
   id: string;
@@ -8,11 +7,9 @@ interface MenuCategory {
 }
 
 export function MenuCategoryIndex({
-  locale,
   categories,
   label,
 }: {
-  locale: Locale;
   categories: MenuCategory[];
   label: string;
 }) {

@@ -66,7 +66,13 @@
     "meta-menu-description": "Il menù di Mamma Giovanna: insalate, pasta, pizze, specialità italiane, carni, pesci, dolci fatti in casa e vini italiani.",
     "home-marquee": "Impasto per pizza fatto in casa · Ingredienti di prima qualità preparati da noi · Cucina italiana generosa · Dolci fatti in casa · Colmar",
     "home-kicker": "Ristorante italiano & pizzeria — Colmar",
-    "language": "Lingua"
+    "language": "Lingua",
+    "previous-slide": "Immagine precedente",
+    "next-slide": "Immagine successiva",
+    "hero-alt-salle": "La sala del ristorante Mamma Giovanna a Colmar",
+    "hero-alt-pizza": "Pizza artigianale con salame, prosciutto e basilico",
+    "hero-alt-interior": "L'atmosfera accogliente di un ristorante italiano",
+    "hero-alt-ingredients": "Pomodori, mozzarella e basilico: ingredienti di prima qualità"
   },
   "menu": {
     "antipasti": "Antipasti",

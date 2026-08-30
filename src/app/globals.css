@@ -190,16 +190,17 @@
 }
 
 /* Motion primitives — transforms/opacity only, preserving layout and crawlable HTML. */
-@keyframes hero-drift {
+@keyframes ken-burns-loop {
   from {
-    transform: scale(1.06) translate3d(1%, 0, 0);
-  }
-  to {
     transform: scale(1) translate3d(0, 0, 0);
   }
+  to {
+    transform: scale(1.09) translate3d(1.2%, 0, 0);
+  }
 }
-.animate-hero-drift {
-  animation: hero-drift 16s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.animate-ken-burns-loop {
+  animation: ken-burns-loop 14s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 @keyframes marquee {
@@ -298,7 +299,7 @@
     transform: none;
     transition: none;
   }
-  .animate-hero-drift,
+  .animate-ken-burns-loop,
   .animate-rule-grow,
   .animate-gentle-pulse {
     animation: none !important;

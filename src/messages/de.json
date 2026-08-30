@@ -66,7 +66,13 @@
     "meta-menu-description": "Die Karte von Mamma Giovanna: Salate, Pasta, Pizzen, italienische Spezialitäten, Fleisch, Fisch, hausgemachte Desserts und italienische Weine.",
     "home-marquee": "Selbstgemachter Pizzateig · Zutaten höchster Qualität, von uns zubereitet · Großzügige italienische Küche · Hausgemachte Desserts · Colmar",
     "home-kicker": "Italienisches Restaurant & Pizzeria — Colmar",
-    "language": "Sprache"
+    "language": "Sprache",
+    "previous-slide": "Vorheriges Bild",
+    "next-slide": "Nächstes Bild",
+    "hero-alt-salle": "Der Gastraum des Mamma Giovanna in Colmar",
+    "hero-alt-pizza": "Pizza mit Salami, Schinken und Basilikum",
+    "hero-alt-interior": "Warme Atmosphäre eines italienischen Restaurants",
+    "hero-alt-ingredients": "Tomaten, Mozzarella und Basilikum: Zutaten höchster Qualität"
   },
   "menu": {
     "antipasti": "Antipasti - Vorspeisen",
