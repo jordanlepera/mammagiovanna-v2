@@ -1,5 +1,4 @@
 import { getTranslations, setRequestLocale, getMessages } from 'next-intl/server';
-import { cn } from '@/lib/utils';
 import { MenuCategoryIndex } from '@/components/menu-category-index';
 import type { Metadata } from 'next';
 import {
@@ -52,45 +51,55 @@ function MenuRow({
   menu: Record<string, string>;
   locale: Locale;
 }) {
+  const name = itemName(item, menu);
+  const description = itemDesc(item, menu);
+  const children = item.children
+    ?.map((key) => menu[key])
+    .filter(Boolean)
+    .join(' · ');
+
   return (
-    <div className="py-4">
-      <div className="flex items-baseline">
-        <h4 className="text-cream font-medium">{itemName(item, menu)}</h4>
-        {item.capacity && (
-          <span className="text-muted-foreground ml-2 text-xs tracking-wide uppercase">
-            {item.capacity}
-          </span>
-        )}
-        {item.price !== undefined && (
-          <>
-            <span className="price-leader" aria-hidden />
-            {item.discount !== undefined ? (
-              <del className="text-muted-foreground text-sm">{formatPrice(item.price, locale)}</del>
-            ) : (
-              <span className="text-cream font-semibold">{formatPrice(item.price, locale)}</span>
+    <article className="menu-row group border-porcelain/12 border-b py-5 last:border-0 sm:py-6">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-8">
+        <div className="min-w-0">
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h3 className="font-display text-porcelain group-hover:text-rosso-soft min-w-0 text-xl leading-tight break-words transition-colors duration-300 sm:text-2xl">
+              {name}
+            </h3>
+            {item.capacity && (
+              <span className="text-porcelain/45 shrink-0 text-[0.65rem] font-semibold tracking-[0.14em] uppercase">
+                {item.capacity}
+              </span>
             )}
-          </>
-        )}
-        {item.discount !== undefined && (
-          <span className="text-tomato ml-2 font-semibold">
-            {formatPrice(item.discount, locale)}
-          </span>
+          </div>
+          {description && (
+            <p className="text-porcelain/60 mt-2 max-w-3xl text-sm leading-6">{description}</p>
+          )}
+          {children && (
+            <p className="text-porcelain/70 mt-2 text-sm leading-6 italic">{children}</p>
+          )}
+        </div>
+        {item.price !== undefined && (
+          <div className="flex min-w-0 items-baseline sm:justify-end">
+            <span className="price-leader hidden sm:block" aria-hidden />
+            {item.discount !== undefined ? (
+              <>
+                <del className="text-porcelain/45 shrink-0 text-sm">
+                  {formatPrice(item.price, locale)}
+                </del>
+                <span className="text-rosso-soft ml-3 shrink-0 font-semibold">
+                  {formatPrice(item.discount, locale)}
+                </span>
+              </>
+            ) : (
+              <span className="font-display text-porcelain shrink-0 text-lg">
+                {formatPrice(item.price, locale)}
+              </span>
+            )}
+          </div>
         )}
       </div>
-      {itemDesc(item, menu) && (
-        <p className="text-muted-foreground mt-1 max-w-2xl text-sm leading-relaxed">
-          {itemDesc(item, menu)}
-        </p>
-      )}
-      {item.children && item.children.length > 0 && (
-        <p className="text-cream/70 mt-1 text-sm italic">
-          {item.children
-            .map((c) => menu[c])
-            .filter(Boolean)
-            .join(' · ')}
-        </p>
-      )}
-    </div>
+    </article>
   );
 }
 
@@ -105,26 +114,47 @@ function WineTable({
   locale: Locale;
   titleKey: string;
 }) {
-  const columns = [menu['pitcher-12cl'] ?? '12cl', '25cl', '50cl', '75cl'];
+  const columns = ['12cl', '25cl', '50cl', '75cl'];
   return (
-    <div aria-label={menu[titleKey]}>
-      {wines.map((w) => (
-        <div
-          key={w.name}
-          className="border-border/40 flex items-baseline border-b py-3 last:border-0"
-        >
-          <span className="text-cream font-medium">{w.name}</span>
-          <span className="price-leader" aria-hidden />
-          {w.prices.map((p, i) =>
-            p > 0 ? (
-              <span key={i} className={cn('ml-3 text-sm', i === 0 && 'text-cream font-semibold')}>
-                {formatPrice(p, locale)}
-              </span>
-            ) : null,
-          )}
-        </div>
-      ))}
-      <span className="sr-only">{columns.join(' ')}</span>
+    <div className="mt-4" aria-label={menu[titleKey]}>
+      <div className="border-porcelain/15 bg-porcelain/5 overflow-x-auto border">
+        <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
+          <caption className="sr-only">{menu[titleKey]}</caption>
+          <thead className="border-porcelain/20 text-porcelain/55 border-b text-[0.65rem] tracking-[0.16em] uppercase">
+            <tr>
+              <th scope="col" className="px-4 py-3 font-semibold">
+                {menu[titleKey]}
+              </th>
+              {columns.map((column) => (
+                <th key={column} scope="col" className="px-3 py-3 text-right font-semibold">
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-porcelain/10 divide-y">
+            {wines.map((wine) => (
+              <tr key={wine.name}>
+                <th
+                  scope="row"
+                  className="font-display text-porcelain px-4 py-3 text-base font-normal"
+                >
+                  {wine.name}
+                </th>
+                {wine.prices.map((price, index) => (
+                  <td
+                    key={`${wine.name}-${columns[index]}`}
+                    className="text-porcelain/75 px-3 py-3 text-right"
+                  >
+                    {price > 0 ? formatPrice(price, locale) : '—'}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-porcelain/50 mt-3 text-xs sm:hidden">{menu['swipe-left']}</p>
     </div>
   );
 }
@@ -136,24 +166,33 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
   const messages = (await getMessages({ locale })) as Messages;
   const menu = messages.menu ?? {};
 
-  const renderSection = (section: MenuSection) => (
-    <section key={section.id} id={section.id} className="scroll-mt-24">
-      <h2 className="font-display text-cream text-2xl font-bold md:text-3xl">
-        {menu[section.titleKey] ?? section.titleKey}
-      </h2>
+  const renderSection = (section: MenuSection, sectionIndex: number) => (
+    <section
+      key={section.id}
+      id={section.id}
+      className="menu-section border-porcelain/15 scroll-mt-28 border-t pt-8 first:border-t-0"
+    >
+      <div className="mb-2 flex items-baseline gap-4">
+        <span className="text-rosso-soft text-[0.65rem] font-semibold tracking-[0.2em]">
+          {String(sectionIndex + 2).padStart(2, '0')}
+        </span>
+        <h2 className="font-display text-porcelain text-3xl font-medium md:text-4xl">
+          {menu[section.titleKey] ?? section.titleKey}
+        </h2>
+      </div>
       {section.items.length > 0 && (
-        <div className="divide-border/40 divide-y">
+        <div>
           {section.items.map((item, i) => (
             <MenuRow key={`${section.id}-${i}`} item={item} menu={menu} locale={locale as Locale} />
           ))}
         </div>
       )}
       {section.subsections.map((sub) => (
-        <div key={sub.key} className="mt-8">
-          <h3 className="text-basil-soft text-xs font-semibold tracking-[0.18em] uppercase">
+        <div key={sub.key} className="mt-10">
+          <h3 className="text-rosso-soft border-porcelain/15 border-b pb-3 text-xs font-semibold tracking-[0.22em] uppercase">
             {menu[sub.key] ?? sub.key}
           </h3>
-          <div className="divide-border/40 divide-y">
+          <div>
             {sub.items.map((item, i) => (
               <MenuRow key={`${sub.key}-${i}`} item={item} menu={menu} locale={locale as Locale} />
             ))}
@@ -208,7 +247,7 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-24 pb-12 sm:px-6">
+    <div className="ink-surface paper-grain mx-auto max-w-7xl px-5 pt-[6.5rem] pb-20 sm:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(menuJsonLd).replace(/</g, '\u003c') }}
@@ -242,7 +281,9 @@ export default async function MenuPage({ params }: { params: Promise<{ locale: s
           }))}
         />
       </div>
-      <div className="space-y-14">{MENU_SECTIONS.map(renderSection)}</div>
+      <div className="space-y-20">
+        {MENU_SECTIONS.map((section, index) => renderSection(section, index))}
+      </div>
     </div>
   );
 }
