@@ -159,7 +159,11 @@ export function HeroCarousel({
           interactionRef.current = false;
         }}
       >
-        <Carousel setApi={setApi} opts={{ loop: true, align: 'start' }} className="h-full">
+        <Carousel
+          setApi={setApi}
+          opts={{ loop: true, align: 'start' }}
+          className="hero-carousel absolute inset-0"
+        >
           <CarouselContent className="-ml-0 h-full">
             {slides.map((slide, index) => (
               <CarouselItem key={slide.src} className="relative h-full pl-0">

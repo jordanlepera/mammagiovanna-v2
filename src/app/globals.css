@@ -190,6 +190,16 @@
 }
 
 /* Motion primitives — transforms/opacity only, preserving layout and crawlable HTML. */
+/* Full-screen hero carousel: embla's track wraps slides in auto-height
+   containers; force the chain to fill the measured flex area so the fill
+   images always get a real, non-zero box. */
+.hero-carousel [data-slot='carousel-content'] {
+  height: 100%;
+}
+.hero-carousel [data-slot='carousel-content'] > div {
+  height: 100%;
+}
+
 @keyframes ken-burns-loop {
   from {
     transform: scale(1) translate3d(0, 0, 0);
